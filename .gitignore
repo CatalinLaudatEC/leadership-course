@@ -1,0 +1,9 @@
+# Source documents are internal and stay out of the public repo
+source/
+*.docx
+# Build intermediates
+build/*.json
+build/v2.html
+build/v3.html
+build/stage2.html
+__pycache__/
