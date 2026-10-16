@@ -887,8 +887,16 @@ function render(keep){
   $("#page").innerHTML = view==="c" ? V.comp(arg) : (V[view]||V.home)(arg,qs);
   renderChrome(); if(keep){ window.scrollTo(0,y); if(fs){ const n=$(fs); if(n){ n.focus({preventScroll:true}); } } }
 }
-let lastView=parse().view, lastArg=parse().arg;
-window.addEventListener("hashchange",()=>{ const {view,arg}=parse(); if(view==="c" && (lastView!=="c"||arg!==lastArg)) compTab="overview"; const same=view===lastView&&arg===lastArg; lastView=view; lastArg=arg; render(same); if(!same){ window.scrollTo(0,0); $("#main").focus({preventScroll:true}); } closeSide(); });
+let lastView=parse().view, lastArg=parse().arg, lastHash=location.hash||"#/";
+/* return point: the page you left to open a document, so the reader can get back to the same tab and scroll position */
+let RET=null;
+const TAB_NAMES={overview:"Overview",task:"Practice task",check:"Quick check",sign:"Evidence & sign-off"};
+function retLabel(v,a){ if(v==="c"){ const c=C.find(x=>String(x.id)===String(a)); return c?`${c.id}. ${c.title}`:"competency"; } const n=NAV.find(x=>x.h===(v==="home"?"#/":"#/"+v)); return n?n.t:"previous page"; }
+function trackReturn(view,arg){
+  if (view==="doc"){ if (lastView!=="doc") RET={h:lastHash,view:lastView,arg:lastArg,tab:compTab,y:window.scrollY,label:retLabel(lastView,lastArg),sub:lastView==="c"?TAB_NAMES[compTab]:""}; return null; }
+  const r=RET; RET=null; return r && r.view===view && r.arg===arg ? r : null;
+}
+window.addEventListener("hashchange",()=>{ const {view,arg}=parse(); const back=trackReturn(view,arg); lastHash=location.hash||"#/"; if(view==="c" && (lastView!=="c"||arg!==lastArg)) compTab=back?back.tab:"overview"; const same=view===lastView&&arg===lastArg; lastView=view; lastArg=arg; render(same); if(!same){ window.scrollTo(0,back?back.y:0); $("#main").focus({preventScroll:true}); } closeSide(); });
 
 const tip=$("#tip");
 document.addEventListener("mouseover",e=>{ const t=e.target.closest&&e.target.closest("[data-tip]"); if(!t){ tip.hidden=true; return; } tip.innerHTML=t.dataset.tip; tip.hidden=false; });

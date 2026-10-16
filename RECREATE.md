@@ -267,6 +267,7 @@ Aliases: `#/workflow` → workflow doc, `#/form` → standards doc, `#/checkpoin
   - Mentor: marking dots.
 - Accordion sections with smooth expand. Closed sections are `inert`.
 - Each section ends with "Mark as read" and "Next: …".
+- **Return bar:** opening a document from another page (e.g. "Open Team Communication Workflow" on a competency's Practice task tab) shows a sticky "Back to 7. Writes Tasks… · Practice task" pill. It, and the browser's Back button, return to the same competency tab and scroll position. It survives jumps between documents and clears on leaving the documents (`RET`, `trackReturn()` in the router, `retBar()` in `docs_view.js`).
 
 **Document-specific additions:**
 - **Program:**

@@ -23,7 +23,7 @@ let S;""","""  const yn=[], tb=[]; DOCS.standards.sections.forEach(sec=>sec.bloc
   return s;
 }
 let S;""")
-cut("const gapsList = () =>","const ROUTE_CLS")
+cut("const gapsList = () =>","function shuffle(")  # keep shuffle(): the quick check uses it
 i=t.index("const NAV = ["); j=t.index("];",i)+2
 t=t[:i]+'''const NAV = [
   {g:"PROGRAM",first:true},

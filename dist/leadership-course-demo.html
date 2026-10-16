@@ -474,6 +474,14 @@ mark{background:rgba(240,166,58,.4);color:inherit;border-radius:3px;padding:0 1p
 @media (max-width:1280px){ .docgrid5{grid-template-columns:repeat(3,minmax(0,1fr))} }
 @media (max-width:1100px){ .docgrid{grid-template-columns:1fr} .toc{position:static;max-height:none} }
 @media (max-width:860px){ .docgrid5{grid-template-columns:1fr} .drow{grid-template-columns:1fr} .dlab{padding:8px 12px} .dg-boxes{grid-template-columns:1fr} .doctitle{font-size:1.3rem} }
+/* return bar */
+.retbar{position:sticky;top:76px;z-index:20;display:flex;align-items:center;gap:12px;width:fit-content;max-width:100%;margin:0 0 12px;padding:8px 16px 8px 10px;border-radius:999px;border:1px solid var(--blue);background:var(--panel);color:var(--text);box-shadow:0 6px 20px rgba(0,0,0,.25);text-decoration:none}
+.retbar:hover{background:var(--blue-soft)}
+.retbar .rb-ic{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--blue-strong);color:#fff;flex:0 0 auto}
+.retbar .rb-ic svg{transform:rotate(180deg)}
+.retbar .rb-t{display:flex;flex-direction:column;line-height:1.2;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.retbar .rb-t small{color:var(--muted);font-weight:500;font-size:.75rem}
+@media (max-width:860px){.retbar{top:72px}.retbar .chip{display:none}}
 
 @media (max-width:1280px){ .g4{grid-template-columns:repeat(2,minmax(0,1fr))} .jump{grid-template-columns:repeat(3,1fr)} }
 @media (max-width:1100px){ .g-wide,.g-side,.g2{grid-template-columns:1fr} .sticky{position:static} .md{grid-template-columns:1fr} .flow{grid-template-columns:repeat(4,1fr);row-gap:18px} .flow::before{display:none} }
@@ -954,6 +962,7 @@ const weekNum = c => c.phase===2 ? 7 : +c.weekLabel.replace(/\D/g,"");
 const initials = n => n.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join("") || "?";
 const answeredCount = id => (S.answers[id]||[]).filter(x=>x&&x.trim()).length;
 const scnState = s => { const a=answeredCount(s.id); return a===0?"none":a>=s.questions.length?"full":"part"; };
+function shuffle(a, seed){ a=a.slice(); let x=seed||7; for(let i=a.length-1;i>0;i--){ x=(x*9301+49297)%233280; const j=Math.floor(x/233280*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 const ROUTE_CLS = ["r0","r1","r2","r3"];
 const ROUTE_COL = ["var(--green)","var(--blue)","#B38CF5","var(--amber)"];
 
@@ -1534,11 +1543,14 @@ function tocHtml(key, secs){
   return `<div class="toc-top"><b>Contents</b><span class="muted small">${readOf(key)}/${D.sections.length} read</span></div><div class="pbar green" style="margin:6px 0 10px"><i style="width:${docPct(key)*100}%"></i></div>${html}`;
 }
 
+/* ---------- return bar: back to the page that opened this document ---------- */
+const retBar = () => RET ? `<a class="retbar" href="${esc(RET.h)}"><span class="rb-ic">${ic("chev","width:16px;height:16px")}</span><span class="rb-t"><small>Back to</small>${esc(RET.label)}</span>${RET.sub?`<span class="chip">${esc(RET.sub)}</span>`:""}</a>` : "";
+
 /* ---------- doc page ---------- */
 V.doc = (key, qs) => {
   const D=DOCS[key]; if(!D) return V.home();
   const M=DOC_META[key];
-  if (M.mentor && !isMentor()) return `<div class="crumb"><a href="#/">Overview</a>${ic("chev","width:14px;height:14px")}Documents</div>
+  if (M.mentor && !isMentor()) return `${retBar()}<div class="crumb"><a href="#/">Overview</a>${ic("chev","width:14px;height:14px")}Documents</div>
     <div class="card dochead"><div class="grad"></div><h1 class="doctitle">${esc(D.title)}</h1><div class="meta">${D.subtitle.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>
     <div class="locked">${ic("shield","width:40px;height:40px")}<h2>Mentor version — not for circulation</h2><p class="muted">It holds the required elements and wrong turns for each situation. Switch to Mentor in the profile menu to open it.</p><button class="btn" data-role="mentor">View as mentor</button>
     <p class="muted small" style="margin-top:14px">In this demo the content still ships inside the page. In production it must come from the server, only for mentors.</p></div></div>`;
@@ -1579,7 +1591,7 @@ V.doc = (key, qs) => {
         <div class="dsec-f"><button class="btn ${read[s.id]?"quiet":"out"} sm" data-read="${key}:${s.id}">${read[s.id]?ic("ok","width:15px;height:15px")+"Read":"Mark as read"}</button>
         ${nxt?`<button class="btn sm" data-next="${key}:${s.id}:${nxt.id}">Next: ${esc(nxt.title)}${ic("chev","width:15px;height:15px")}</button>`:`<span class="muted small">End of document</span>`}</div></div></div></section>`; };
 
-  return `
+  return `${retBar()}
   <div class="crumb"><a href="#/">Overview</a>${ic("chev","width:14px;height:14px")}Documents${ic("chev","width:14px;height:14px")}${esc(M.name)}</div>
   <div class="card dochead"><div class="grad"></div>
     <div class="frow" style="align-items:center;gap:20px">
@@ -1769,8 +1781,16 @@ function render(keep){
   renderChrome(); if(keep){ window.scrollTo(0,y); if(fs){ const n=$(fs); if(n){ n.focus({preventScroll:true}); } } }
   afterRender(!keep);
 }
-let lastView=parse().view, lastArg=parse().arg;
-window.addEventListener("hashchange",()=>{ loadStart(); const {view,arg}=parse(); if(view==="c" && (lastView!=="c"||arg!==lastArg)) compTab="overview"; const same=view===lastView&&arg===lastArg; lastView=view; lastArg=arg; render(same); if(!same){ window.scrollTo(0,0); $("#main").focus({preventScroll:true}); } closeSide(); });
+let lastView=parse().view, lastArg=parse().arg, lastHash=location.hash||"#/";
+/* return point: the page you left to open a document, so the reader can get back to the same tab and scroll position */
+let RET=null;
+const TAB_NAMES={overview:"Overview",task:"Practice task",check:"Quick check",sign:"Evidence & sign-off"};
+function retLabel(v,a){ if(v==="c"){ const c=C.find(x=>String(x.id)===String(a)); return c?`${c.id}. ${c.title}`:"competency"; } const n=NAV.find(x=>x.h===(v==="home"?"#/":"#/"+v)); return n?n.t:"previous page"; }
+function trackReturn(view,arg){
+  if (view==="doc"){ if (lastView!=="doc") RET={h:lastHash,view:lastView,arg:lastArg,tab:compTab,y:window.scrollY,label:retLabel(lastView,lastArg),sub:lastView==="c"?TAB_NAMES[compTab]:""}; return null; }
+  const r=RET; RET=null; return r && r.view===view && r.arg===arg ? r : null;
+}
+window.addEventListener("hashchange",()=>{ loadStart(); const {view,arg}=parse(); const back=trackReturn(view,arg); lastHash=location.hash||"#/"; if(view==="c" && (lastView!=="c"||arg!==lastArg)) compTab=back?back.tab:"overview"; const same=view===lastView&&arg===lastArg; lastView=view; lastArg=arg; render(same); if(!same){ window.scrollTo(0,back?back.y:0); $("#main").focus({preventScroll:true}); } closeSide(); });
 
 const tip=$("#tip");
 document.addEventListener("mouseover",e=>{ const t=e.target.closest&&e.target.closest("[data-tip]"); if(!t){ tip.hidden=true; return; } tip.innerHTML=t.dataset.tip; tip.hidden=false; });

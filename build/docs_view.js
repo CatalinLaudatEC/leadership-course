@@ -223,11 +223,14 @@ function tocHtml(key, secs){
   return `<div class="toc-top"><b>Contents</b><span class="muted small">${readOf(key)}/${D.sections.length} read</span></div><div class="pbar green" style="margin:6px 0 10px"><i style="width:${docPct(key)*100}%"></i></div>${html}`;
 }
 
+/* ---------- return bar: back to the page that opened this document ---------- */
+const retBar = () => RET ? `<a class="retbar" href="${esc(RET.h)}"><span class="rb-ic">${ic("chev","width:16px;height:16px")}</span><span class="rb-t"><small>Back to</small>${esc(RET.label)}</span>${RET.sub?`<span class="chip">${esc(RET.sub)}</span>`:""}</a>` : "";
+
 /* ---------- doc page ---------- */
 V.doc = (key, qs) => {
   const D=DOCS[key]; if(!D) return V.home();
   const M=DOC_META[key];
-  if (M.mentor && !isMentor()) return `<div class="crumb"><a href="#/">Overview</a>${ic("chev","width:14px;height:14px")}Documents</div>
+  if (M.mentor && !isMentor()) return `${retBar()}<div class="crumb"><a href="#/">Overview</a>${ic("chev","width:14px;height:14px")}Documents</div>
     <div class="card dochead"><div class="grad"></div><h1 class="doctitle">${esc(D.title)}</h1><div class="meta">${D.subtitle.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>
     <div class="locked">${ic("shield","width:40px;height:40px")}<h2>Mentor version — not for circulation</h2><p class="muted">It holds the required elements and wrong turns for each situation. Switch to Mentor in the profile menu to open it.</p><button class="btn" data-role="mentor">View as mentor</button>
     <p class="muted small" style="margin-top:14px">In this demo the content still ships inside the page. In production it must come from the server, only for mentors.</p></div></div>`;
@@ -268,7 +271,7 @@ V.doc = (key, qs) => {
         <div class="dsec-f"><button class="btn ${read[s.id]?"quiet":"out"} sm" data-read="${key}:${s.id}">${read[s.id]?ic("ok","width:15px;height:15px")+"Read":"Mark as read"}</button>
         ${nxt?`<button class="btn sm" data-next="${key}:${s.id}:${nxt.id}">Next: ${esc(nxt.title)}${ic("chev","width:15px;height:15px")}</button>`:`<span class="muted small">End of document</span>`}</div></div></section>`; };
 
-  return `
+  return `${retBar()}
   <div class="crumb"><a href="#/">Overview</a>${ic("chev","width:14px;height:14px")}Documents${ic("chev","width:14px;height:14px")}${esc(M.name)}</div>
   <div class="card dochead"><div class="grad"></div>
     <div class="frow" style="align-items:center;gap:20px">
