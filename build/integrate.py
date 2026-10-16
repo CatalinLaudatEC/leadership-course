@@ -64,7 +64,7 @@ cut("let cpSel = 1;","V.record = ")
 rep("/* ============================================================ ROUTER & EVENTS","/*DOCSVIEW*/\n/* ============================================================ ROUTER & EVENTS")
 t=t.replace("/*DOCSVIEW*/",open('docs_view.js').read())
 rep('''return {view:parts[0]||"home",arg:parts[1],qs}; }''','''let view=parts[0]||"home", arg=parts[1]; const AL={workflow:"workflow",form:"standards",checkpoint:"candidate"}; if(AL[view]){ arg=AL[view]; view="doc"; } return {view,arg,qs}; }''')
-rep('''  renderChrome(); if(keep){''','''  if (view==="doc"){ highlightDoc((docQ[arg]||"").trim()); if(pendingScroll){ const el=$("#sec-"+pendingScroll); pendingScroll=null; if(el) setTimeout(()=>el.scrollIntoView({block:"start"}),30); } }
+rep('''  renderChrome(); if(keep){''','''  if (view==="doc"){ highlightDoc((docQ[arg]||"").trim()); if(pendingScroll){ const el=$("#sec-"+pendingScroll); pendingScroll=null; if(el && !restoring) setTimeout(()=>el.scrollIntoView({block:"start"}),30); } }
   renderChrome(); if(keep){''')
 rep('''  if (d.gap) return `[data-gap="${d.gap}"]`; if (el.id) return "#"+el.id; return null; }''','''  if (d.gap) return `[data-gap="${d.gap}"]`; if (el.id) return "#"+el.id; if (d.inp) return `[data-inp="${d.inp}"]`; if (d.src) return `[data-src="${d.src}"]`;
   if (d.ans) return `[data-ans="${d.ans}"][data-k="${d.k}"]`; if (d.mnote) return `${el.tagName.toLowerCase()}[data-mnote="${d.mnote}"]`; return null; }''')

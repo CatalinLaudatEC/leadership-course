@@ -267,7 +267,7 @@ Aliases: `#/workflow` → workflow doc, `#/form` → standards doc, `#/checkpoin
   - Mentor: marking dots.
 - Accordion sections with smooth expand. Closed sections are `inert`.
 - Each section ends with "Mark as read" and "Next: …".
-- **Return bar:** opening a document from another page (e.g. "Open Team Communication Workflow" on a competency's Practice task tab) shows a sticky "Back to 7. Writes Tasks… · Practice task" pill. It, and the browser's Back button, return to the same competency tab and scroll position. It survives jumps between documents and clears on leaving the documents (`RET`, `trackReturn()` in the router, `retBar()` in `docs_view.js`).
+- **Back pill:** see "Back navigation" under Global.
 
 **Document-specific additions:**
 - **Program:**
@@ -316,6 +316,11 @@ Aliases: `#/workflow` → workflow doc, `#/form` → standards doc, `#/checkpoin
 - **Role switch** (Candidate/Mentor), theme toggle, sidebar collapse.
 - **Command palette:** `Ctrl/⌘K` or `/` searches pages, competencies, every document section and section body text.
 - Bell shows a dot when something needs attention.
+- **Back navigation (back stack):** any in-content link remembers where you were and shows a sticky "Back to …" pill at the top of the next page. Examples: a competency's "Open Team Communication Workflow", an Overview card, a map box, a chart bar, a search-palette result, or a jump to another section inside a document.
+  - The pill names the page plus its tab or document section (e.g. "7. Writes Tasks… · Practice task").
+  - Clicking it, or the browser's Back button, restores the same competency tab and scroll position. Chains unwind one step at a time.
+  - Sidebar, top bar and breadcrumbs are plain navigation and clear the stack. The competency pager (`data-lateral`), the contents panel, the workflow stepper, the answer dots and "Next: …" move sideways and leave it unchanged.
+  - Code: `BACK`, `navKind()`, `pushBack()`, `goBack()` and `backBar()` next to the router. `jumpTo()` pushes for in-document jumps. `render()` puts the pill on every page and adds `.has-back` so the sticky contents panel moves down.
 - Toasts confirm saves.
 
 ---
@@ -451,6 +456,8 @@ Aliases: `#/workflow` → workflow doc, `#/form` → standards doc, `#/checkpoin
 | `data-pi` | palette item |
 | `data-w1` | toggle Week 1 fields |
 | `data-wfeng` | engineer-sections filter |
+| `data-back` | back pill: return to the previous page, tab and scroll position |
+| `data-lateral` | link that moves sideways (competency pager) and keeps the back stack |
 
 ---
 

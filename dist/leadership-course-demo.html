@@ -474,13 +474,17 @@ mark{background:rgba(240,166,58,.4);color:inherit;border-radius:3px;padding:0 1p
 @media (max-width:1280px){ .docgrid5{grid-template-columns:repeat(3,minmax(0,1fr))} }
 @media (max-width:1100px){ .docgrid{grid-template-columns:1fr} .toc{position:static;max-height:none} }
 @media (max-width:860px){ .docgrid5{grid-template-columns:1fr} .drow{grid-template-columns:1fr} .dlab{padding:8px 12px} .dg-boxes{grid-template-columns:1fr} .doctitle{font-size:1.3rem} }
-/* return bar */
-.retbar{position:sticky;top:76px;z-index:20;display:flex;align-items:center;gap:12px;width:fit-content;max-width:100%;margin:0 0 12px;padding:8px 16px 8px 10px;border-radius:999px;border:1px solid var(--blue);background:var(--panel);color:var(--text);box-shadow:0 6px 20px rgba(0,0,0,.25);text-decoration:none}
+/* back pill (every page) */
+.retbar{position:sticky;top:76px;z-index:20;display:flex;align-items:center;gap:12px;width:fit-content;max-width:100%;margin:0 0 12px;padding:8px 16px 8px 10px;border-radius:999px;border:1px solid var(--blue);background:var(--panel);color:var(--text);box-shadow:0 6px 20px rgba(0,0,0,.25);font:inherit;text-align:left;cursor:pointer}
 .retbar:hover{background:var(--blue-soft)}
+.retbar:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .retbar .rb-ic{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--blue-strong);color:#fff;flex:0 0 auto}
 .retbar .rb-ic svg{transform:rotate(180deg)}
 .retbar .rb-t{display:flex;flex-direction:column;line-height:1.2;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .retbar .rb-t small{color:var(--muted);font-weight:500;font-size:.75rem}
+.retbar .chip{max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.has-back .toc{top:138px;max-height:calc(100vh - 154px)}
+.has-back .sticky{top:140px}
 @media (max-width:860px){.retbar{top:72px}.retbar .chip{display:none}}
 
 @media (max-width:1280px){ .g4{grid-template-columns:repeat(2,minmax(0,1fr))} .jump{grid-template-columns:repeat(3,1fr)} }
@@ -1243,8 +1247,8 @@ V.comp = (id) => {
   <div class="tabs" role="tablist">${tabs.map(([k,t])=>`<button role="tab" data-tab="${k}" aria-selected="${compTab===k}">${t}</button>`).join("")}</div>
   <div class="tabpane">${body}</div>
   <div class="frow mt" style="justify-content:space-between">
-    ${prev?`<a class="btn quiet" style="flex:0 0 auto" href="#/c/${prev.id}">${ic("chev","transform:rotate(180deg);width:16px;height:16px")}${prev.id}. ${esc(prev.title)}</a>`:"<span></span>"}
-    ${next?`<a class="btn" style="flex:0 0 auto" href="#/c/${next.id}">${next.id}. ${esc(next.title)}${ic("chev","width:16px;height:16px")}</a>`:`<a class="btn" style="flex:0 0 auto" href="#/record">Sign-off record</a>`}
+    ${prev?`<a class="btn quiet" data-lateral style="flex:0 0 auto" href="#/c/${prev.id}">${ic("chev","transform:rotate(180deg);width:16px;height:16px")}${prev.id}. ${esc(prev.title)}</a>`:"<span></span>"}
+    ${next?`<a class="btn" data-lateral style="flex:0 0 auto" href="#/c/${next.id}">${next.id}. ${esc(next.title)}${ic("chev","width:16px;height:16px")}</a>`:`<a class="btn" style="flex:0 0 auto" href="#/record">Sign-off record</a>`}
   </div>`;
 };
 
@@ -1543,14 +1547,11 @@ function tocHtml(key, secs){
   return `<div class="toc-top"><b>Contents</b><span class="muted small">${readOf(key)}/${D.sections.length} read</span></div><div class="pbar green" style="margin:6px 0 10px"><i style="width:${docPct(key)*100}%"></i></div>${html}`;
 }
 
-/* ---------- return bar: back to the page that opened this document ---------- */
-const retBar = () => RET ? `<a class="retbar" href="${esc(RET.h)}"><span class="rb-ic">${ic("chev","width:16px;height:16px")}</span><span class="rb-t"><small>Back to</small>${esc(RET.label)}</span>${RET.sub?`<span class="chip">${esc(RET.sub)}</span>`:""}</a>` : "";
-
 /* ---------- doc page ---------- */
 V.doc = (key, qs) => {
   const D=DOCS[key]; if(!D) return V.home();
   const M=DOC_META[key];
-  if (M.mentor && !isMentor()) return `${retBar()}<div class="crumb"><a href="#/">Overview</a>${ic("chev","width:14px;height:14px")}Documents</div>
+  if (M.mentor && !isMentor()) return `<div class="crumb"><a href="#/">Overview</a>${ic("chev","width:14px;height:14px")}Documents</div>
     <div class="card dochead"><div class="grad"></div><h1 class="doctitle">${esc(D.title)}</h1><div class="meta">${D.subtitle.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>
     <div class="locked">${ic("shield","width:40px;height:40px")}<h2>Mentor version — not for circulation</h2><p class="muted">It holds the required elements and wrong turns for each situation. Switch to Mentor in the profile menu to open it.</p><button class="btn" data-role="mentor">View as mentor</button>
     <p class="muted small" style="margin-top:14px">In this demo the content still ships inside the page. In production it must come from the server, only for mentors.</p></div></div>`;
@@ -1591,7 +1592,7 @@ V.doc = (key, qs) => {
         <div class="dsec-f"><button class="btn ${read[s.id]?"quiet":"out"} sm" data-read="${key}:${s.id}">${read[s.id]?ic("ok","width:15px;height:15px")+"Read":"Mark as read"}</button>
         ${nxt?`<button class="btn sm" data-next="${key}:${s.id}:${nxt.id}">Next: ${esc(nxt.title)}${ic("chev","width:15px;height:15px")}</button>`:`<span class="muted small">End of document</span>`}</div></div></div></section>`; };
 
-  return `${retBar()}
+  return `
   <div class="crumb"><a href="#/">Overview</a>${ic("chev","width:14px;height:14px")}Documents${ic("chev","width:14px;height:14px")}${esc(M.name)}</div>
   <div class="card dochead"><div class="grad"></div>
     <div class="frow" style="align-items:center;gap:20px">
@@ -1620,6 +1621,7 @@ function highlightDoc(q){
 }
 function jumpTo(key, sec){
   if (parse().view!=="doc" || parse().arg!==key){ location.hash=`#/doc/${key}?sec=${sec}`; return; }
+  if (navKindNow()==="content" && $("#sec-"+sec)) pushBack(snapshot(location.hash||"#/","doc",key));
   docOpen[key] ||= new Set(); docOpen[key].add(sec);
   if (docQ[key] && !SEC_TEXT[key][sec].includes(docQ[key].toLowerCase())) docQ[key]="";
   if (key==="workflow" && wfEng && !["s0","s1","s3","s4","s5","s9"].includes(sec)) wfEng=false;
@@ -1776,21 +1778,45 @@ function focusSel(el){ if(!el||!el.dataset) return null; const d=el.dataset;
   if (d.ans) return `[data-ans="${d.ans}"][data-k="${d.k}"]`; if (d.mnote) return `${el.tagName.toLowerCase()}[data-mnote="${d.mnote}"]`; return null; }
 function render(keep){
   const fs=focusSel(document.activeElement), y=window.scrollY, {view,arg,qs}=parse();
-  $("#page").innerHTML = view==="c" ? V.comp(arg) : (V[view]||V.home)(arg,qs);
-  if (view==="doc"){ highlightDoc((docQ[arg]||"").trim()); if(pendingScroll){ const el=$("#sec-"+pendingScroll); pendingScroll=null; if(el) setTimeout(()=>el.scrollIntoView({block:"start"}),30); } }
+  $("#page").innerHTML = backBar() + (view==="c" ? V.comp(arg) : (V[view]||V.home)(arg,qs));
+  $("#page").classList.toggle("has-back", BACK.length>0);
+  if (view==="doc"){ highlightDoc((docQ[arg]||"").trim()); if(pendingScroll){ const el=$("#sec-"+pendingScroll); pendingScroll=null; if(el && !restoring) setTimeout(()=>el.scrollIntoView({block:"start"}),30); } }
   renderChrome(); if(keep){ window.scrollTo(0,y); if(fs){ const n=$(fs); if(n){ n.focus({preventScroll:true}); } } }
   afterRender(!keep);
 }
 let lastView=parse().view, lastArg=parse().arg, lastHash=location.hash||"#/";
-/* return point: the page you left to open a document, so the reader can get back to the same tab and scroll position */
-let RET=null;
+/* back stack: each in-content link (a competency's document button, an Overview card, a map box, a search result, a
+   jump inside a document...) remembers where you were, so a "Back to ..." pill returns you to the same tab, section and
+   scroll position. The sidebar, top bar and breadcrumbs are plain navigation and clear it; the competency pager and
+   the table of contents move sideways and leave it alone. The browser Back button restores the same way. */
+let BACK=[], NAV_SRC={k:null,t:0}, restoring=false;
 const TAB_NAMES={overview:"Overview",task:"Practice task",check:"Quick check",sign:"Evidence & sign-off"};
-function retLabel(v,a){ if(v==="c"){ const c=C.find(x=>String(x.id)===String(a)); return c?`${c.id}. ${c.title}`:"competency"; } const n=NAV.find(x=>x.h===(v==="home"?"#/":"#/"+v)); return n?n.t:"previous page"; }
-function trackReturn(view,arg){
-  if (view==="doc"){ if (lastView!=="doc") RET={h:lastHash,view:lastView,arg:lastArg,tab:compTab,y:window.scrollY,label:retLabel(lastView,lastArg),sub:lastView==="c"?TAB_NAMES[compTab]:""}; return null; }
-  const r=RET; RET=null; return r && r.view===view && r.arg===arg ? r : null;
-}
-window.addEventListener("hashchange",()=>{ loadStart(); const {view,arg}=parse(); const back=trackReturn(view,arg); lastHash=location.hash||"#/"; if(view==="c" && (lastView!=="c"||arg!==lastArg)) compTab=back?back.tab:"overview"; const same=view===lastView&&arg===lastArg; lastView=view; lastArg=arg; render(same); if(!same){ window.scrollTo(0,back?back.y:0); $("#main").focus({preventScroll:true}); } closeSide(); });
+function navKind(el){ if(!el||!el.closest) return null;
+  if (el.closest("[data-back]")) return "back";
+  if (el.closest(".side,.top,.crumb")) return "top";
+  if (el.closest("[data-lateral],[data-next],#toc,.flow,.dots,.tabs")) return "lateral";
+  return "content"; }
+const navKindNow = () => performance.now()-NAV_SRC.t<1000 ? NAV_SRC.k : null;
+["click","keydown"].forEach(ev=>document.addEventListener(ev,e=>{ if(ev==="keydown"&&e.key!=="Enter"&&e.key!==" ") return; NAV_SRC={k:navKind(e.target),t:performance.now(),el:e.target}; },true));
+function retLabel(v,a){ if(v==="c"){ const c=C.find(x=>String(x.id)===String(a)); return c?`${c.id}. ${c.title}`:"competency"; }
+  if(v==="doc") return (DOC_META[a]||{}).name||"document";
+  const n=NAV.find(x=>x.h===(v==="home"?"#/":"#/"+v)); return n?n.t:"previous page"; }
+function retSub(v,a){ if(v==="c") return TAB_NAMES[compTab]||"";
+  if(v==="doc"&&DOCS[a]){ const own=NAV_SRC.el&&NAV_SRC.el.closest&&NAV_SRC.el.closest(".dsec"); let id=own&&own.isConnected?own.id.slice(4):null; if(!id) $$(".dsec").forEach(s=>{ if(s.getBoundingClientRect().top<160) id=s.id.slice(4); }); const s=DOCS[a].sections.find(x=>x.id===id); return s?s.title:""; }
+  return ""; }
+function snapshot(h,view,arg){ return {h,view,arg,tab:compTab,y:window.scrollY,label:retLabel(view,arg),sub:retSub(view,arg)}; }
+function pushBack(e){ const t=BACK[BACK.length-1]; if(t&&t.h===e.h&&Math.abs(t.y-e.y)<40) return; BACK.push(e); if(BACK.length>20) BACK.shift(); }
+const backBar = () => { const e=BACK[BACK.length-1]; return e?`<button class="retbar" data-back aria-label="Back to ${esc(e.label)}${e.sub?", "+esc(e.sub):""}"><span class="rb-ic">${ic("chev","width:16px;height:16px")}</span><span class="rb-t"><small>Back to</small>${esc(e.label)}</span>${e.sub?`<span class="chip">${esc(e.sub)}</span>`:""}</button>`:""; };
+function goBack(){ const e=BACK[BACK.length-1]; if(!e) return; const {view,arg}=parse();
+  if (e.view===view && e.arg===arg){ BACK.pop(); if(view==="c") compTab=e.tab; render(true); window.scrollTo({top:e.y,behavior:RM?"auto":"smooth"}); return; }
+  if ((location.hash||"#/")===e.h) return; location.hash=e.h; }
+window.addEventListener("hashchange",()=>{ loadStart(); const {view,arg}=parse(); const h=location.hash||"#/", kind=navKindNow(); NAV_SRC.k=null;
+  const changed = view!==lastView||arg!==lastArg, top=BACK[BACK.length-1]; let back=null;
+  if (kind==="top") BACK=[];
+  else if (top && top.h===h) back=BACK.pop();
+  else if (changed && kind==="content") pushBack(snapshot(lastHash,lastView,lastArg));
+  lastHash=h; if(view==="c" && changed) compTab=back&&back.view==="c"?back.tab:"overview"; const same=!changed; lastView=view; lastArg=arg;
+  restoring=!!back; render(same); restoring=false; if(!same){ window.scrollTo(0,back?back.y:0); $("#main").focus({preventScroll:true}); } closeSide(); });
 
 const tip=$("#tip");
 document.addEventListener("mouseover",e=>{ const t=e.target.closest&&e.target.closest("[data-tip]"); if(!t){ tip.hidden=true; return; } tip.innerHTML=t.dataset.tip; tip.hidden=false; });
@@ -1811,6 +1837,7 @@ document.addEventListener("click",e=>{
   if (cl("#collapseBtn")){ S.ui.collapsed=!S.ui.collapsed; save(); renderChrome(); return; }
   if (cl("#menuBtn")){ const s=$("#side"), o=!s.classList.contains("open"); s.classList.toggle("open",o); $("#menuBtn").setAttribute("aria-expanded",String(o)); return; }
   if (t.closest(".side a")) closeSide();
+  if (cl("[data-back]")){ goBack(); return; }
   const go=cl("[data-go]"); if (go){ location.hash=go.dataset.go; return; }
   const tb=cl("[data-tab]"); if (tb){ compTab=tb.dataset.tab; render(true); return; }
   const sl=cl("[data-setlvl]"); if (sl){ const id=parse().arg, n=+sl.dataset.setlvl, s=S.sign[id]||{}; S.sign[id]={...s,level:lvl(id)===n?n-1||"":n,mentor:s.mentor||S.profile.mentor||"",date:s.date||today()}; save(); render(true); toast(S.sign[id].level?`Level set to L${S.sign[id].level}`:"Level cleared"); return; }
