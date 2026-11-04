@@ -231,19 +231,26 @@ Aliases: `#/workflow` → workflow doc, `#/form` → standards doc, `#/checkpoin
 
 ## 6. Features by screen
 
-### Overview (`#/`)
-- **Greeting** that changes with the time of day, the date, the current week and the signed-off count.
-- **Role-aware buttons:**
-  - Candidate: "Open checkpoint" and "Continue: competency N".
-  - Mentor: "Sign-off record" and "Mark checkpoint".
-- **4 KPI tiles:** signed off /15, current week, checkpoint answered /10, open standards questions.
-- **Documents card:** 5 tiles showing read % and section count; the mentor tile is locked for candidates.
-- **Level by competency** bar chart (L0–L4, dashed Target L3 line, Phase 1/2 split, click a bar to open it).
-- **Overall progress** donut plus a progress bar per phase.
-- **Program timeline:** 10-week Gantt chart, current-week marker, clickable competency chips, checkpoint row, background-habits row.
-- **Up next** (next 5 competencies not yet done).
-- **Needs attention** (computed): standards gaps, missing evidence, low quick-check scores, unread program/workflow, open checkpoint situations from Week 5, flagged scope changes, and (for mentors) answered-but-unmarked situations.
-- **Jump to** grid.
+### Overview (`#/`) — The Hub dashboard
+Laid out like The Hub's dashboard (hub.eracore.com/home) so the course can be reviewed in its future home. Code: `build/home.js` (view, icons, data, events) and `build/home.css`, injected by `integrate.py` at `/*HOMEVIEW*/` and `/*DOCSCSS*/`.
+- **Header:** greeting by time of day with a waving hand, "Here's what's happening across your hub today", date pill.
+- **Stat cards:**
+  - **Pending Tasks:** total, with a split bar showing how many come from The Hub and how many from the program.
+  - **Courses Due:** the Team Leader Raising Program, showing its week and signed-off progress.
+  - **Leave Requests:** the balance shows N/A, because the Hub screenshot shows the label with no number.
+- **Your Activity:** Hubstaff activity area chart with a week selector (4 weeks), average, peak and days tracked, a Today marker and point tooltips.
+  - The data is sample data, labelled as such (`HUB.activity`).
+  - Below 600px the chart switches to a compact layout with single-letter day labels.
+- **Quick Links:** My Learning (into the course) plus The Hub's five links. Links that only exist in The Hub show a toast instead of navigating away.
+- **Pending Tasks list:**
+  - The Hub's two items.
+  - The program's items: continue the next competency, plus everything from `attention()`. The first 2 show, with a "Show N more" toggle.
+  - The bell scrolls to this card.
+- **Recent Announcements:** an empty state.
+- **Upcoming Events:** Phase 1 checkpoint, Phase 2 start and the final assessment, dated from `profile.start`.
+- **World Clock:** 8 live analog and digital clocks (Adriatic BIM/Zagreb, Egypt, India, LATAM/Mexico City, MENA/Dubai, Pakistan, Romania, Ukraine) via `Intl` time zones. They have day and night faces and a 12h/24h toggle saved as `S.ui.h24`.
+  - Above 1480px the clocks are a sticky right column, as in The Hub. Below that they become a full-width strip under the dashboard.
+- **Responsive:** the stat cards go to 2 columns at ≤1100px and 1 column at ≤860px. Activity and Quick Links stack at ≤1100px.
 
 ### Program map (`#/map`)
 - Conduit-run SVG: Phase 1 runs right into the Checkpoint pull box, then Phase 2 runs back to Final.

@@ -13,7 +13,7 @@ function afterRender(changed){
   clearTimeout(window._ai); window._ai=setTimeout(()=>pg.classList.remove("anim-in"),2300);
 }
 function countUp(root){
-  root.querySelectorAll(".kpi .v, .ring-txt, .donut-leg b").forEach(el=>{
+  root.querySelectorAll(".kpi .v, .hstat .v, .ring-txt, .donut-leg b").forEach(el=>{
     const node=[...el.childNodes].find(n=>n.nodeType===3&&/\d/.test(n.nodeValue)); if(!node) return;
     const m=node.nodeValue.match(/^(\D*)(\d+)(.*)$/); if(!m||+m[2]===0) return;
     const to=+m[2], t0=performance.now(), d=1100;
@@ -31,7 +31,7 @@ document.addEventListener("pointerdown",e=>{ if(RM) return; const b=e.target.clo
   const r=b.getBoundingClientRect(), s=Math.max(r.width,r.height), sp=document.createElement("span"); sp.className="ripple"; sp.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;
   if(getComputedStyle(b).position==="static") b.style.position="relative"; b.style.overflow="hidden"; b.appendChild(sp); setTimeout(()=>sp.remove(),700); },{passive:true});
 /* tilt + spotlight */
-const TILT=".kpi,.doctile,.ccard,.lvlcard,.dg-week,.dg-box,.dg-cp,.choices button:not(:disabled),.rule,.jump a,.subhead,.flow button,.slist button";
+const TILT=".kpi,.hstat,.wclock,.doctile,.ccard,.lvlcard,.dg-week,.dg-box,.dg-cp,.choices button:not(:disabled),.rule,.jump a,.subhead,.flow button,.slist button";
 let curTilt=null;
 function resetTilt(el){ if(!el) return; el.classList.remove("tilting"); el.style.transform=""; }
 document.addEventListener("pointermove",e=>{

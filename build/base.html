@@ -612,50 +612,7 @@ const ring = (pct, col="var(--green)", size=120, label="") => { const r=48, L=2*
 /* ============================================================ VIEWS ============================================================ */
 const V = {};
 
-V.home = () => {
-  const done=C.filter(c=>status(c.id)==="done").length, prog=C.filter(c=>status(c.id)==="progress").length, todo=15-done-prog;
-  const h=new Date().getHours(), greet=h<12?"Good morning":h<18?"Good afternoon":"Good evening";
-  const wk=weekNow(), wkC=C.filter(c=>c.phase===2?wk>=7:weekNum(c)===wk), wkTheme=wk>=7?"Client and people":wk===6&&!wkC.length?"":(wkC[0]||{}).theme||"";
-  const nx=upNext()[0], att=attention(), cpFull=SC.filter(s=>scnState(s)==="full").length, gaps=gapsList().length;
-  const dateStr=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
-  return `
-  <div class="ph"><div><h1>${greet}, ${esc(S.profile.name.split(" ")[0])}</h1><div class="sub">${dateStr} · Week ${wk} of 10 · ${done} of 15 competencies signed off</div></div>
-    <div class="acts">${isMentor()?`<a class="btn out" href="#/record">${ic("award")}Sign-off record</a><a class="btn" href="#/checkpoint">${ic("check")}Mark checkpoint</a>`:`<a class="btn out" href="#/checkpoint">${ic("check")}Open checkpoint</a>${nx?`<a class="btn" href="#/c/${nx.id}">${ic("play")}Continue: competency ${nx.id}</a>`:""}`}</div></div>
-
-  <div class="grid g4">
-    <a class="card kpi" href="#/record"><span class="tile t-blue">${ic("award")}</span><div><div class="k">Signed off</div><div class="s">At Level 3 or above</div></div><div class="v">${done}<span class="muted" style="font-size:1rem;font-weight:500">/15</span></div></a>
-    <a class="card kpi" href="#/map"><span class="tile t-green">${ic("cal")}</span><div><div class="k">Current week</div><div class="s">${esc(wkTheme||"Program in progress")}</div></div><div class="v">W${wk}</div></a>
-    <a class="card kpi" href="#/checkpoint"><span class="tile t-amber">${ic("check")}</span><div><div class="k">Checkpoint</div><div class="s">Situations answered</div></div><div class="v">${cpFull}<span class="muted" style="font-size:1rem;font-weight:500">/10</span></div></a>
-    <a class="card kpi" href="#/form"><span class="tile t-red">${ic("alert")}</span><div><div class="k">Open questions</div><div class="s">Standards form gaps for the PM</div></div><div class="v">${gaps}</div></a>
-  </div>
-
-  <div class="grid g-wide mt">
-  <div class="card"><div class="card-h"><h2>Level by competency</h2><div class="r"><span class="muted small">Select a bar to open it</span></div></div>
-    <div class="legend"><span><i style="background:var(--green)"></i>L3–L4</span><span><i style="background:var(--blue-strong)"></i>L1–L2</span><span><i style="background:var(--grey)"></i>Not assessed</span></div>
-    ${levelChart()}</div>
-    <div class="card"><div class="card-h"><h2>Overall progress</h2></div>
-      <div class="donut-wrap">${donut([{v:done,c:"var(--green)",l:"Signed off",h:"#/map?f=done"},{v:prog,c:"var(--blue-strong)",l:"In progress",h:"#/map?f=progress"},{v:todo,c:"var(--grey)",l:"Not started",h:"#/map?f=todo"}],180,Math.round(done/15*100)+"%")}
-      <div class="donut-leg"><div><i style="background:var(--green)"></i>Signed off<b>${done}</b></div><div><i style="background:var(--blue-strong)"></i>In progress<b>${prog}</b></div><div><i style="background:var(--grey)"></i>Not started<b>${todo}</b></div></div></div>
-      <div style="margin-top:18px"><div class="frow" style="justify-content:space-between;margin-bottom:6px"><span class="small muted" style="flex:0 0 auto">Phase 1 · 11 competencies</span><b class="small" style="flex:0 0 auto">${C.filter(c=>c.phase===1&&status(c.id)==="done").length}/11</b></div><div class="pbar green"><i style="width:${C.filter(c=>c.phase===1&&status(c.id)==="done").length/11*100}%"></i></div>
-      <div class="frow" style="justify-content:space-between;margin:12px 0 6px"><span class="small muted" style="flex:0 0 auto">Phase 2 · 4 competencies</span><b class="small" style="flex:0 0 auto">${C.filter(c=>c.phase===2&&status(c.id)==="done").length}/4</b></div><div class="pbar green"><i style="width:${C.filter(c=>c.phase===2&&status(c.id)==="done").length/4*100}%"></i></div></div>
-    </div>
-  </div>
-
-    <div class="card mt"><div class="card-h"><h2>Program timeline</h2><div class="r"><span class="muted small">Week ${wk} marked</span><a class="link" href="#/map">Program map</a></div></div>
-      <div class="legend"><span><i style="background:var(--green)"></i>Signed off</span><span><i style="background:var(--blue-strong)"></i>In progress</span><span><i style="background:var(--grey)"></i>Not started</span></div>
-      ${timeline()}</div>
-
-  <div class="grid g2 mt">
-    <div class="card"><div class="card-h"><span class="count blue">${upNext().length}</span><h2>Up next</h2><div class="r"><a class="link" href="#/map">All competencies</a></div></div>
-      ${upNext().map(c=>`<div class="rowi"><span class="avatar sm">${c.id}</span><div class="main"><div class="t">${esc(c.title)}</div><div class="s">${esc(c.weekLabel)} · ${esc(c.theme)}</div></div>${statusChip(c.id)}<a class="btn out sm" href="#/c/${c.id}">Open</a></div>`).join("")||`<div class="empty">All fifteen signed off. Book the final assessment.</div>`}</div>
-    <div class="card"><div class="card-h"><span class="count">${att.length}</span><h2>Needs attention</h2></div>
-      ${att.slice(0,5).map(a=>`<div class="rowi"><span class="avatar sm" style="background:var(--${a.chip[1]==="bad"?"red":"amber"}-soft);color:var(--${a.chip[1]==="bad"?"red":"amber"})">${ic("alert","width:16px;height:16px")}</span><div class="main"><div class="t">${esc(a.t)}</div><div class="s">${esc(a.s)}</div></div><span class="chip ${a.chip[1]}">${a.chip[0]}</span><a class="btn out sm" href="${a.h}">View</a></div>`).join("")||`<div class="empty">Nothing waiting. Keep the background habits running.</div>`}</div>
-  </div>
-
-  <div class="card mt"><div class="card-h"><h2>Jump to</h2></div><div class="jump">
-    ${[["#/workflow","flow","Team workflow"],["#/drill","route","Escalation drill"],["#/form","form","Standards form"],["#/logs","log","Decision & change logs"],["#/checkpoint","check","Phase 1 checkpoint"],["#/record","award","Sign-off record"],["#/map","map","Program map"],["#/c/1","book","Competency 1"],["#/engine","cpu","How it's built"]].map(([h,i,t])=>`<a href="${h}">${ic(i)}${t}</a>`).join("")}
-  </div></div>`;
-};
+/*HOMEVIEW*/
 
 let mapFilter="all", mapQuery="";
 V.map = (arg, qs) => {
@@ -937,7 +894,7 @@ document.addEventListener("click",e=>{
     else if (confirm("Clear all demo progress in this browser?")){ const th=S.ui.theme; S=blank(); S.ui.theme=th; S.seeded=true; save(); render(true); toast("Started empty"); }
     return; }
   if (cl("#themeBtn")){ S.ui.theme=S.ui.theme==="dark"?"light":"dark"; save(); render(true); return; }
-  if (cl("#bellBtn")){ location.hash="#/"; setTimeout(()=>{ const c=[...$$(".card-h h2")].find(h=>h.textContent==="Needs attention"); c&&c.scrollIntoView({behavior:"smooth",block:"center"}); },50); return; }
+  if (cl("#bellBtn")){ location.hash="#/"; setTimeout(()=>{ const c=$("#hubTasks"); c&&c.scrollIntoView({behavior:"smooth",block:"center"}); },50); return; }
   if (cl("#collapseBtn")){ S.ui.collapsed=!S.ui.collapsed; save(); renderChrome(); return; }
   if (cl("#menuBtn")){ const s=$("#side"), o=!s.classList.contains("open"); s.classList.toggle("open",o); $("#menuBtn").setAttribute("aria-expanded",String(o)); return; }
   if (t.closest(".side a")) closeSide();

@@ -6,7 +6,8 @@ def cut(start,end):
     global t
     i=t.index(start); j=t.index(end,i); t=t[:i]+t[j:]
 rep("@media (max-width:1280px){ .g4","/*DOCSCSS*/\n@media (max-width:1280px){ .g4")
-t=t.replace("/*DOCSCSS*/",open('docs.css').read())
+t=t.replace("/*DOCSCSS*/",open('docs.css').read()+chr(10)+open('home.css').read())
+t=t.replace("/*HOMEVIEW*/",open('home.js').read())
 rep("/*COURSE*/","/*COURSE*/\nconst DOCS = /*DOCS*/{};")
 rep('const KEY = "tlrp-demo-v2";','const KEY = "tlrp-demo-v3";')
 rep('sign:{},evidence:{},qc:{},drill:{},form:{},decisions:[],changes:[],answers:{},marks:{},final:{},seeded:false});',
@@ -50,17 +51,6 @@ rep('''  const fl = S.changes.filter(c=>c.c==="Flagged").length;''','''  if (isM
   const fl = S.changes.filter(c=>c.c==="Flagged").length;''')
 rep('h:"#/form"});','h:"#/doc/standards"});')
 rep('h:"#/checkpoint"});','h:"#/doc/candidate"});')
-rep('''  <div class="grid g-wide mt">
-  <div class="card"><div class="card-h"><h2>Level by competency</h2>''','''  <div class="card mt"><div class="card-h"><span class="count blue">5</span><h2>Documents</h2><div class="r"><span class="muted small">Each source document, segmented and interactive — reading progress saves as you go</span></div></div>
-    <div class="docgrid5">${DOC_KEYS.map((k,i)=>{ const M=DOC_META[k], p=docPct(k), locked=M.mentor&&!isMentor(); return `<a class="doctile" href="#/doc/${k}"><div class="frow" style="align-items:center;gap:10px;justify-content:space-between"><span class="tile ${["t-blue","t-green","t-amber","t-blue","t-red"][i]}" style="flex:0 0 auto">${ic(M.icon)}</span><span style="flex:0 0 auto">${locked?`<span class="chip">Mentor only</span>`:`<span class="chip ${p===1?"done":p?"progress":""}">${Math.round(p*100)}% read</span>`}</span></div><b>${esc(M.name)}</b><span class="muted small" style="flex:1">${esc(M.desc)}</span><div class="pbar green"><i style="width:${p*100}%"></i></div><span class="muted small">${DOCS[k].sections.length} sections</span></a>`; }).join("")}</div></div>
-
-  <div class="grid g-wide mt">
-    <div class="card"><div class="card-h"><h2>Level by competency</h2>''')
-rep('''[["#/workflow","flow","Team workflow"],["#/drill","route","Escalation drill"],["#/form","form","Standards form"],["#/logs","log","Decision & change logs"],["#/checkpoint","check","Phase 1 checkpoint"],["#/record","award","Sign-off record"],["#/map","map","Program map"],["#/c/1","book","Competency 1"],["#/engine","cpu","How it's built"]]''',
-    '''[["#/doc/program","book","Program document"],["#/doc/workflow","flow","Team workflow"],["#/doc/standards","form","Standards form"],["#/doc/candidate","check","Scenario test"],["#/doc/mentor","shield","Mentor marking"],["#/map","map","Program map"],["#/drill","route","Escalation drill"],["#/logs","log","Decision & change logs"],["#/record","award","Sign-off record"],["#/engine","cpu","How it's built"]]''')
-cut("let wfPhase = 1;","V.drill = ")
-cut("let formOpen = {0:true};","V.logs = ")
-cut("let cpSel = 1;","V.record = ")
 rep("/* ============================================================ ROUTER & EVENTS","/*DOCSVIEW*/\n/* ============================================================ ROUTER & EVENTS")
 t=t.replace("/*DOCSVIEW*/",open('docs_view.js').read())
 rep('''return {view:parts[0]||"home",arg:parts[1],qs}; }''','''let view=parts[0]||"home", arg=parts[1]; const AL={workflow:"workflow",form:"standards",checkpoint:"candidate"}; if(AL[view]){ arg=AL[view]; view="doc"; } return {view,arg,qs}; }''')
