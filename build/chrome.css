@@ -1,0 +1,83 @@
+/* ============================================================ HUB CHROME — sidebar and top bar laid out like The Hub ============================================================ */
+:root{--sw:256px}
+.collapsed{--sw:72px}
+
+/* top bar: brand cell over the sidebar, page title, then actions */
+.top{padding:0 18px 0 0;gap:10px}
+.top .logo{width:var(--sw);height:100%;flex:none;padding:0 20px;gap:9px;border-right:1px solid var(--border);color:var(--text);font-size:.86rem;font-weight:600;letter-spacing:.06em;transition:width .2s}
+.top .logo svg{flex:none}
+.top .logo .sep{width:1px;height:14px;background:var(--border)}
+.top .logo .app{font-size:.72rem;font-weight:600;letter-spacing:.08em;color:var(--muted)}
+.collapsed .top .logo{padding:0;justify-content:center}
+.collapsed .top .logo .co,.collapsed .top .logo .sep,.collapsed .top .logo .app{display:none}
+.ttl{min-width:0;padding-left:8px}
+.ttl h1{font-size:1rem;font-weight:700;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0}
+.tsub{color:var(--muted);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .iconbtn{color:var(--text)}
+.bcount{position:absolute;top:2px;right:2px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--red);color:#fff;font-size:.66rem;font-weight:700;display:grid;place-items:center;border:2px solid var(--side);line-height:1}
+.bcount[hidden]{display:none}
+.rolepill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:600;color:var(--green);background:var(--green-soft);border:1px solid color-mix(in srgb,var(--green) 40%,transparent);white-space:nowrap}
+.rolepill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.rolepill.mentor{color:var(--amber);background:var(--amber-soft);border-color:color-mix(in srgb,var(--amber) 40%,transparent)}
+.top .me{gap:10px;padding:5px 16px 5px 5px;border-radius:999px;background:var(--panel-2);border:1px solid var(--border)}
+.top .me:hover{border-color:color-mix(in srgb,var(--blue) 45%,var(--border));background:var(--panel-2)}
+.top .me .avatar{width:30px;height:30px;font-size:.74rem;font-weight:700;background:var(--blue-soft);color:var(--blue);box-shadow:none}
+.top .me .name{font-weight:500;font-size:.9rem;color:var(--text);white-space:nowrap}
+.top .menu{right:60px}
+
+/* sidebar: search, collapsible groups, footer */
+.layout,.collapsed .layout{grid-template-columns:var(--sw) minmax(0,1fr)}
+.side{display:flex;flex-direction:column;overflow:hidden;padding:12px 0 0}
+.findbtn{display:flex;align-items:center;gap:9px;margin:0 12px 10px;padding:7px 10px;border-radius:9px;border:1px solid var(--border);background:var(--panel-2);color:var(--text);font:inherit;font-size:.86rem;cursor:pointer;flex:none;transition:border-color .2s}
+.findbtn:hover{border-color:var(--blue)}
+.findbtn .ico{width:15px;height:15px;color:var(--muted);flex:none}
+.findbtn kbd{margin-left:auto;font-size:.7rem;min-width:18px;text-align:center}
+.side .nav{flex:1;overflow:auto;padding:0 12px 16px;scrollbar-width:thin}
+.nav > li > .it{margin-bottom:6px}
+.nav .it{display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;border-radius:9px;border:0;background:transparent;font:inherit;font-size:.84rem;font-weight:500;color:var(--text);text-align:left;cursor:pointer}
+.nav .it .ico{width:16px;height:16px;flex:none}
+.nav .it .txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav .it:hover{background:var(--panel-2);transform:none}
+.nav .it:hover .ico{transform:none}
+.nav a.it[aria-current="page"]{background:var(--blue-soft);color:var(--blue);box-shadow:none}
+.nav a.it[aria-current="page"]::before{display:none}
+.nav .grp-w{margin-top:6px}
+.nav .grp{display:flex;align-items:center;width:100%;padding:8px 4px 5px;border:0;margin:0;background:none;font:inherit;font-size:.82rem;font-weight:700;letter-spacing:0;color:var(--text);cursor:pointer;text-align:left}
+.nav .grp .ico{margin-left:auto;width:15px;height:15px;color:var(--muted);transition:transform .2s}
+.nav .grp-w.shut .grp .ico{transform:rotate(-90deg)}
+.nav .grp-w > ul{list-style:none;margin:0;padding:0 0 0 8px;display:grid;grid-template-columns:minmax(0,1fr);gap:1px}
+.nav .grp-w.shut > ul{display:none}
+.nav .cnt{font-size:.7rem;flex:none;margin-left:0}
+.side-foot{flex:none;border-top:1px solid var(--border);padding:14px 16px;font-size:.84rem;color:var(--text)}
+
+/* edge handle to collapse the sidebar */
+.collapse,.collapsed .collapse{left:calc(var(--sw) - 8px);top:50%;width:16px;height:32px;border-radius:6px;background:var(--side)}
+
+/* collapsed sidebar: icons only */
+.collapsed .side .nav{padding:0 10px 16px}
+.collapsed .findbtn{justify-content:center;margin:0 10px 10px;padding:8px 0}
+.collapsed .findbtn kbd,.collapsed .side .txt,.collapsed .nav .cnt,.collapsed .nav .grp .ico{display:none}
+.collapsed .nav .grp{padding:0;height:1px;background:var(--border);margin:10px 0}
+.collapsed .nav .grp-w > ul,.collapsed .nav .grp-w.shut > ul{display:grid;padding:0}
+.collapsed .nav .it{justify-content:center;padding:10px 0}
+.collapsed .side-foot{text-align:center;padding:14px 0}
+
+@media (max-width:1100px){ .rolepill{display:none} }
+@media (max-width:860px){
+  .top{padding:0 8px 0 4px;gap:4px}
+  .top .logo,.collapsed .top .logo{width:auto;border-right:0;padding:0 6px}
+  .top .logo .co,.top .logo .sep,.top .logo .app{display:none}
+  .tsub{display:none}
+  .ttl{padding-left:2px}
+  .top .me{padding:3px;background:transparent;border-color:transparent}
+  .top .menu{right:8px}
+  .collapsed{--sw:256px}
+  .layout,.collapsed .layout{grid-template-columns:minmax(0,1fr)}
+  .side{width:280px}
+  .collapsed .side .txt,.collapsed .findbtn kbd,.collapsed .nav .cnt,.collapsed .nav .grp .ico{display:initial}
+  .collapsed .nav .grp{height:auto;background:none;margin:0;padding:8px 4px 6px}
+  .collapsed .nav .it{justify-content:flex-start;padding:9px 14px}
+  .collapsed .findbtn{justify-content:flex-start;margin:0 12px 10px;padding:7px 10px}
+  .collapsed .nav .grp-w.shut > ul{display:none}
+  .collapsed .nav .grp-w > ul{padding-left:12px}
+}

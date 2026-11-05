@@ -7,7 +7,7 @@ def cut(start,end):
     i=t.index(start); j=t.index(end,i); t=t[:i]+t[j:]
 rep("@media (max-width:1280px){ .g4","/*DOCSCSS*/\n@media (max-width:1280px){ .g4")
 t=t.replace("/*DOCSCSS*/",open('docs.css').read()+chr(10)+open('home.css').read())
-t=t.replace("/*HOMEVIEW*/",open('home.js').read())
+t=t.replace("/*HOMEVIEW*/",open('chrome.js').read()+chr(10)+open('home.js').read())
 rep("/*COURSE*/","/*COURSE*/\nconst DOCS = /*DOCS*/{};")
 rep('const KEY = "tlrp-demo-v2";','const KEY = "tlrp-demo-v3";')
 rep('sign:{},evidence:{},qc:{},drill:{},form:{},decisions:[],changes:[],answers:{},marks:{},final:{},seeded:false});',
@@ -27,25 +27,48 @@ let S;""")
 cut("const gapsList = () =>","function shuffle(")  # keep shuffle(): the quick check uses it
 i=t.index("const NAV = ["); j=t.index("];",i)+2
 t=t[:i]+'''const NAV = [
-  {g:"PROGRAM",first:true},
-  {h:"#/",t:"Overview",i:"grid"},
-  {h:"#/map",t:"Program map",i:"map",cnt:()=>`${C.filter(c=>status(c.id)==="done").length}/15`},
-  {g:"DOCUMENTS"},
-  {h:"#/doc/program",t:"Leader Raising Program",i:"book",cnt:()=>`${readOf("program")}/${DOCS.program.sections.length}`},
-  {h:"#/doc/workflow",t:"Communication Workflow",i:"flow",cnt:()=>`${readOf("workflow")}/${DOCS.workflow.sections.length}`},
-  {h:"#/doc/standards",t:"Standards form",i:"form",cnt:()=>{const g=gapsList().length; return g?{v:g+" gaps",warn:true}:`${readOf("standards")}/${DOCS.standards.sections.length}`;}},
-  {h:"#/doc/candidate",t:"Scenario test",i:"check",cnt:()=>`${SC.filter(s=>scnState(s)==="full").length}/10`},
-  {h:"#/doc/mentor",t:"Mentor marking",i:"shield",cnt:()=>isMentor()?`${SC.filter(s=>(S.marks[s.id]||{}).ok).length}/10`:"Mentor"},
-  {g:"PRACTICE"},
-  {h:"#/drill",t:"Escalation drill",i:"route",cnt:()=>{const n=Object.keys(S.drill.r||{}).length; return n<COURSE.drill.length?`${n}/${COURSE.drill.length}`:"";}},
-  {h:"#/logs",t:"Decision & change logs",i:"log",cnt:()=>S.decisions.length+S.changes.length||""},
-  {g:"ASSESS"},
-  {h:"#/record",t:"Sign-off record",i:"award"},
-  {g:"ABOUT"},
-  {h:"#/engine",t:"How it's built",i:"cpu"}
-];'''+t[j:]
+  {h:"#/",t:"Dashboard",i:"dash"},
+  {g:"My Hub"},
+  {hub:1,t:"My Workspace",i:"layout"},
+  {hub:1,t:"My Profile",i:"ucirc"},
+  {g:"My Growth"},
+  {hub:1,t:"Career Path",i:"trend"},
+  {h:"#/map",t:"My Learning",i:"book",d:"Team Leader Raising Program, all 15 competencies",cnt:()=>`${C.filter(c=>status(c.id)==="done").length}/15`},
+  {g:"Leadership Course"},
+  {h:"#/doc/program",t:"Leader Raising Program",i:"doc",d:"The full program document",cnt:()=>`${readOf("program")}/${DOCS.program.sections.length}`},
+  {h:"#/doc/workflow",t:"Communication Workflow",i:"flow",d:"How the team communicates and escalates",cnt:()=>`${readOf("workflow")}/${DOCS.workflow.sections.length}`},
+  {h:"#/doc/standards",t:"Standards form",i:"form",d:"The project standards you fill in",cnt:()=>{const g=gapsList().length; return g?{v:g+" gaps",warn:true}:`${readOf("standards")}/${DOCS.standards.sections.length}`;}},
+  {h:"#/doc/candidate",t:"Scenario test",i:"check",d:"Ten checkpoint scenarios",cnt:()=>`${SC.filter(s=>scnState(s)==="full").length}/10`},
+  {h:"#/doc/mentor",t:"Mentor marking",i:"shield",d:"The marking key for mentors",cnt:()=>isMentor()?`${SC.filter(s=>(S.marks[s.id]||{}).ok).length}/10`:"Mentor"},
+  {h:"#/drill",t:"Escalation drill",i:"route",d:"Route each situation to the right person",cnt:()=>{const n=Object.keys(S.drill.r||{}).length; return n<COURSE.drill.length?`${n}/${COURSE.drill.length}`:"";}},
+  {h:"#/logs",t:"Decision & change logs",i:"log",d:"Decisions and changes you have recorded",cnt:()=>S.decisions.length+S.changes.length||""},
+  {h:"#/record",t:"Sign-off record",i:"award",d:"Mentor sign-off for each competency"},
+  {h:"#/engine",t:"How it's built",i:"cpu",d:"How this course app is put together"},
+  {g:"Community"},
+  {hub:1,t:"Recognition",i:"trophy"},
+  {hub:1,t:"Announcements",i:"mega"},
+  {hub:1,t:"Company Feed",i:"feed"},
+  {hub:1,t:"Org Chart",i:"org"},
+  {g:"Time & Leave"},
+  {hub:1,t:"Attendance",i:"clock"},
+  {hub:1,t:"Leave",i:"plane"},
+  {hub:1,t:"Overtime",i:"otime"},
+  {hub:1,t:"Team Calendar",i:"cal"},
+  {g:"People & Org"},
+  {hub:1,t:"Benefits & Claims",i:"benefit"},
+  {hub:1,t:"Company Policies",i:"gavel"},
+  {hub:1,t:"Get Involved",i:"hands"},
+  {hub:1,t:"Offboarding",i:"exit"},
+  {hub:1,t:"Performance",i:"bars"},
+  {hub:1,t:"Report A Concern",i:"alert"}
+];
+const navBase = () => { const p=parse(); return p.view==="c" ? "#/map" : p.view==="doc" ? "#/doc/"+p.arg : p.view==="home" ? "#/" : "#/"+p.view; };
+function pageHead(){ const p=parse();
+  if (p.view==="home") return ["Dashboard","Everything waiting on you today, at a glance."];
+  if (p.view==="c"){ const c=C.find(x=>String(x.id)===String(p.arg)); return c?[`Competency ${c.id}`,c.title]:["My Learning",""]; }
+  const n=NAV.find(x=>x.h===navBase()); return n?[n.t,n.d||""]:["The Hub",""]; }'''+t[j:]
 rep('''const h = location.hash || "#/"; const base = h.startsWith("#/c/") ? "#/map" : "#/"+(h.split("/")[1]||"");''',
-    '''const p=parse(); const base = p.view==="c" ? "#/map" : p.view==="doc" ? "#/doc/"+p.arg : p.view==="home" ? "#/" : "#/"+p.view;''')
+    '''const base = navBase();''')
 rep('''  const fl = S.changes.filter(c=>c.c==="Flagged").length;''','''  if (isMentor()){ const um=SC.filter(s=>scnState(s)!=="none" && !(S.marks[s.id]||{}).ok).length; if(um) a.unshift({t:`${um} answered situation${um>1?"s":""} not marked yet`,s:"Mark against the required elements",chip:["Mark","warn"],h:"#/doc/mentor"}); }
   ["program","workflow"].filter(k=>docPct(k)<1).forEach(k=>a.push({t:`${DOC_META[k].name}: ${readOf(k)}/${DOCS[k].sections.length} sections read`,s:k==="workflow"?"Tested at the Phase 1 checkpoint":"The program document, read in full",chip:["Read","warn"],h:`#/doc/${k}`}));
   const fl = S.changes.filter(c=>c.c==="Flagged").length;''')

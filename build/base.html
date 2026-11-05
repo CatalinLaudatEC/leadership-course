@@ -375,19 +375,26 @@ pre{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;
 <body>
 <header class="top">
   <button class="iconbtn mobile-only" id="menuBtn" aria-label="Open navigation" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-  <div class="logo">
-    <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5B8DEF"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs><circle cx="16" cy="16" r="13" fill="none" stroke="url(#lg)" stroke-width="4"/><path d="M10 16h12" stroke="url(#lg)" stroke-width="4" stroke-linecap="round"/></svg>
-    <span class="co">ERACORE</span><span class="sep co"></span><span class="app">Learning Center</span>
-  </div>
+  <a class="logo" href="#/" aria-label="The Hub dashboard">
+    <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5B8DEF"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs><circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="3.6"/><path d="M11 16h10" stroke="url(#lg)" stroke-width="3.6" stroke-linecap="round"/></svg>
+    <span class="co">ERACORE</span><span class="sep"></span><span class="app">THE HUB</span>
+  </a>
+  <div class="ttl"><h1 id="topT">Dashboard</h1><div class="tsub" id="topS"></div></div>
   <div class="grow"></div>
   <button class="iconbtn" id="themeBtn" aria-label="Switch theme"></button>
-  <button class="iconbtn" id="bellBtn" aria-label="Items needing attention"><svg class="ico" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot" id="bellDot" hidden></span></button>
-  <button class="me" id="meBtn" aria-haspopup="menu" aria-expanded="false"><span class="avatar" id="meAv">CL</span><span class="name" id="meName"></span><span class="badge" id="meRole"></span><svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px;color:var(--muted)"><path d="m6 9 6 6 6-6"/></svg></button>
+  <button class="iconbtn" id="bellBtn" aria-label="Items needing attention"><svg class="ico" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bcount" id="bellDot" hidden></span></button>
+  <span class="rolepill" id="meRole"></span>
+  <button class="me" id="meBtn" aria-haspopup="menu" aria-expanded="false"><span class="avatar" id="meAv">CL</span><span class="name" id="meName"></span></button>
   <div class="menu" id="meMenu" role="menu" hidden></div>
+  <button class="iconbtn" id="outBtn" data-hubtoast="Sign out" aria-label="Sign out" title="Sign out"><svg class="ico" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg></button>
 </header>
 
 <div class="layout">
-  <aside class="side" id="side" aria-label="Course navigation"><ul class="nav" id="nav"></ul></aside>
+  <aside class="side" id="side" aria-label="Navigation">
+    <button class="findbtn" id="palBtn" aria-label="Find a page"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="txt">Find a page</span><kbd>/</kbd></button>
+    <ul class="nav" id="nav"></ul>
+    <div class="side-foot"><span class="txt">The Hub</span></div>
+  </aside>
   <main id="main" tabindex="-1"><div class="page" id="page"></div></main>
 </div>
 <button class="collapse" id="collapseBtn" aria-label="Collapse sidebar"><svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -508,14 +515,22 @@ function renderChrome(){
   $("#themeBtn").title = S.ui.theme==="dark"?"Light mode":"Dark mode";
   $("#meAv").textContent = initials(S.profile.name);
   $("#meName").textContent = S.profile.name;
-  $("#meRole").textContent = isMentor()?"MENTOR":"CANDIDATE";
-  $("#meRole").className = "badge"+(isMentor()?" mentor":"");
-  $("#bellDot").hidden = attention().length===0;
-  $("#nav").innerHTML = NAV.map(n=>{
-    if (n.g) return `<li class="grp${n.first?" first":""}"><span>${n.g}</span></li>`;
+  $("#meRole").textContent = isMentor()?"Mentor":"Candidate";
+  $("#meRole").className = "rolepill"+(isMentor()?" mentor":"");
+  const na=attention().length; $("#bellDot").hidden = na===0; $("#bellDot").textContent = na;
+  const [tt,ts]=pageHead(); $("#topT").textContent=tt; $("#topS").textContent=ts;
+  const closed=S.ui.navClosed||{}, item=n=>{
+    if (n.hub) return `<li><button class="it" type="button" data-hubtoast="${n.t}" title="${n.t}">${ic(n.i)}<span class="txt">${n.t}</span></button></li>`;
     let c = n.cnt ? n.cnt() : ""; let warn=false; if (c && typeof c==="object"){ warn=c.warn; c=c.v; }
-    return `<li><a href="${n.h}" title="${n.t}">${ic(n.i)}<span class="txt">${n.t}</span>${c!==""&&c!=null?`<span class="cnt${warn?" warn":""}">${c}</span>`:""}</a></li>`;
-  }).join("");
+    return `<li><a class="it" href="${n.h}" title="${n.t}">${ic(n.i)}<span class="txt">${n.t}</span>${warn&&c?`<span class="cnt warn">${c}</span>`:""}</a></li>`; };
+  let out="", open=null;
+  NAV.forEach(n=>{
+    if (n.g){ if(open!==null) out+=`</ul></li>`; open=n.g; const sh=!closed[n.g];
+      out+=`<li class="grp-w${sh?"":" shut"}"><button class="grp" type="button" data-navgrp="${n.g}" aria-expanded="${sh}"><span class="txt">${n.g}</span>${ic("down")}</button><ul>`; return; }
+    out+=item(n);
+  });
+  if (open!==null) out+=`</ul></li>`;
+  $("#nav").innerHTML = out;
   markNav();
 }
 function markNav(){
@@ -895,6 +910,7 @@ document.addEventListener("click",e=>{
     return; }
   if (cl("#themeBtn")){ S.ui.theme=S.ui.theme==="dark"?"light":"dark"; save(); render(true); return; }
   if (cl("#bellBtn")){ location.hash="#/"; setTimeout(()=>{ const c=$("#hubTasks"); c&&c.scrollIntoView({behavior:"smooth",block:"center"}); },50); return; }
+  const ng=cl("[data-navgrp]"); if (ng){ const g=ng.dataset.navgrp, c=S.ui.navClosed=S.ui.navClosed||{}; c[g]=!c[g]; save(); renderChrome(); return; }
   if (cl("#collapseBtn")){ S.ui.collapsed=!S.ui.collapsed; save(); renderChrome(); return; }
   if (cl("#menuBtn")){ const s=$("#side"), o=!s.classList.contains("open"); s.classList.toggle("open",o); $("#menuBtn").setAttribute("aria-expanded",String(o)); return; }
   if (t.closest(".side a")) closeSide();

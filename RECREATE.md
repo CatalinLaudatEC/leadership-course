@@ -210,8 +210,8 @@ Aliases: `#/workflow` → workflow doc, `#/form` → standards doc, `#/checkpoin
 - The theme toggle sets `data-theme` on the root element.
 
 **Layout:**
-- 64px sticky top bar (logo "ERACORE | Learning Center", search-everything button, theme, bell, avatar with CANDIDATE/MENTOR badge and dropdown).
-- 272px grouped sidebar (PROGRAM / DOCUMENTS / PRACTICE / ASSESS / ABOUT), with count badges and a collapse chevron down to a 72px icon rail.
+- 64px sticky top bar laid out like The Hub (`build/chrome.css`): a brand cell "ERACORE | THE HUB" over the sidebar, the current page title and a one-line subtitle (`pageHead()`; "Dashboard" on the front page), then theme, bell with a red count badge, a green role pill (Candidate, or amber for Mentor), an avatar-and-name pill that opens the role and demo-data menu, and a sign-out icon (toast only).
+- 256px sidebar laid out like The Hub: a "Find a page" button with a `/` hint at the top (opens the search palette), Dashboard, then collapsible title-case groups (My Hub, My Growth, Leadership Course, Community, Time & Leave, People & Org) and a "The Hub" footer. NAV entries with `hub:1` are Hub-only pages that show a toast. "My Learning" opens the program map, and the course pages sit in the Leadership Course group. Only the amber "gaps" count is shown. Group open/closed state is kept in `S.ui.navClosed`. The edge handle collapses the sidebar to a 72px icon rail. The previous course chrome is in the git tag `dashboard-enhanced`.
 - Content max-width 1500px.
 
 **Components:**

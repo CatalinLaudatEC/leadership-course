@@ -880,28 +880,118 @@ mark{animation:popIn .35s var(--spring);box-shadow:0 0 12px -2px rgba(240,166,58
 @media (max-width:860px){.palbtn{min-width:0;padding:8px}.palbtn span,.palbtn kbd{display:none}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}#aurora{display:none}}
 
+/* ============================================================ HUB CHROME — sidebar and top bar laid out like The Hub ============================================================ */
+:root{--sw:256px}
+.collapsed{--sw:72px}
+
+/* top bar: brand cell over the sidebar, page title, then actions */
+.top{padding:0 18px 0 0;gap:10px}
+.top .logo{width:var(--sw);height:100%;flex:none;padding:0 20px;gap:9px;border-right:1px solid var(--border);color:var(--text);font-size:.86rem;font-weight:600;letter-spacing:.06em;transition:width .2s}
+.top .logo svg{flex:none}
+.top .logo .sep{width:1px;height:14px;background:var(--border)}
+.top .logo .app{font-size:.72rem;font-weight:600;letter-spacing:.08em;color:var(--muted)}
+.collapsed .top .logo{padding:0;justify-content:center}
+.collapsed .top .logo .co,.collapsed .top .logo .sep,.collapsed .top .logo .app{display:none}
+.ttl{min-width:0;padding-left:8px}
+.ttl h1{font-size:1rem;font-weight:700;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0}
+.tsub{color:var(--muted);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .iconbtn{color:var(--text)}
+.bcount{position:absolute;top:2px;right:2px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--red);color:#fff;font-size:.66rem;font-weight:700;display:grid;place-items:center;border:2px solid var(--side);line-height:1}
+.bcount[hidden]{display:none}
+.rolepill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:600;color:var(--green);background:var(--green-soft);border:1px solid color-mix(in srgb,var(--green) 40%,transparent);white-space:nowrap}
+.rolepill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.rolepill.mentor{color:var(--amber);background:var(--amber-soft);border-color:color-mix(in srgb,var(--amber) 40%,transparent)}
+.top .me{gap:10px;padding:5px 16px 5px 5px;border-radius:999px;background:var(--panel-2);border:1px solid var(--border)}
+.top .me:hover{border-color:color-mix(in srgb,var(--blue) 45%,var(--border));background:var(--panel-2)}
+.top .me .avatar{width:30px;height:30px;font-size:.74rem;font-weight:700;background:var(--blue-soft);color:var(--blue);box-shadow:none}
+.top .me .name{font-weight:500;font-size:.9rem;color:var(--text);white-space:nowrap}
+.top .menu{right:60px}
+
+/* sidebar: search, collapsible groups, footer */
+.layout,.collapsed .layout{grid-template-columns:var(--sw) minmax(0,1fr)}
+.side{display:flex;flex-direction:column;overflow:hidden;padding:12px 0 0}
+.findbtn{display:flex;align-items:center;gap:9px;margin:0 12px 10px;padding:7px 10px;border-radius:9px;border:1px solid var(--border);background:var(--panel-2);color:var(--text);font:inherit;font-size:.86rem;cursor:pointer;flex:none;transition:border-color .2s}
+.findbtn:hover{border-color:var(--blue)}
+.findbtn .ico{width:15px;height:15px;color:var(--muted);flex:none}
+.findbtn kbd{margin-left:auto;font-size:.7rem;min-width:18px;text-align:center}
+.side .nav{flex:1;overflow:auto;padding:0 12px 16px;scrollbar-width:thin}
+.nav > li > .it{margin-bottom:6px}
+.nav .it{display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;border-radius:9px;border:0;background:transparent;font:inherit;font-size:.84rem;font-weight:500;color:var(--text);text-align:left;cursor:pointer}
+.nav .it .ico{width:16px;height:16px;flex:none}
+.nav .it .txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav .it:hover{background:var(--panel-2);transform:none}
+.nav .it:hover .ico{transform:none}
+.nav a.it[aria-current="page"]{background:var(--blue-soft);color:var(--blue);box-shadow:none}
+.nav a.it[aria-current="page"]::before{display:none}
+.nav .grp-w{margin-top:6px}
+.nav .grp{display:flex;align-items:center;width:100%;padding:8px 4px 5px;border:0;margin:0;background:none;font:inherit;font-size:.82rem;font-weight:700;letter-spacing:0;color:var(--text);cursor:pointer;text-align:left}
+.nav .grp .ico{margin-left:auto;width:15px;height:15px;color:var(--muted);transition:transform .2s}
+.nav .grp-w.shut .grp .ico{transform:rotate(-90deg)}
+.nav .grp-w > ul{list-style:none;margin:0;padding:0 0 0 8px;display:grid;grid-template-columns:minmax(0,1fr);gap:1px}
+.nav .grp-w.shut > ul{display:none}
+.nav .cnt{font-size:.7rem;flex:none;margin-left:0}
+.side-foot{flex:none;border-top:1px solid var(--border);padding:14px 16px;font-size:.84rem;color:var(--text)}
+
+/* edge handle to collapse the sidebar */
+.collapse,.collapsed .collapse{left:calc(var(--sw) - 8px);top:50%;width:16px;height:32px;border-radius:6px;background:var(--side)}
+
+/* collapsed sidebar: icons only */
+.collapsed .side .nav{padding:0 10px 16px}
+.collapsed .findbtn{justify-content:center;margin:0 10px 10px;padding:8px 0}
+.collapsed .findbtn kbd,.collapsed .side .txt,.collapsed .nav .cnt,.collapsed .nav .grp .ico{display:none}
+.collapsed .nav .grp{padding:0;height:1px;background:var(--border);margin:10px 0}
+.collapsed .nav .grp-w > ul,.collapsed .nav .grp-w.shut > ul{display:grid;padding:0}
+.collapsed .nav .it{justify-content:center;padding:10px 0}
+.collapsed .side-foot{text-align:center;padding:14px 0}
+
+@media (max-width:1100px){ .rolepill{display:none} }
+@media (max-width:860px){
+  .top{padding:0 8px 0 4px;gap:4px}
+  .top .logo,.collapsed .top .logo{width:auto;border-right:0;padding:0 6px}
+  .top .logo .co,.top .logo .sep,.top .logo .app{display:none}
+  .tsub{display:none}
+  .ttl{padding-left:2px}
+  .top .me{padding:3px;background:transparent;border-color:transparent}
+  .top .menu{right:8px}
+  .collapsed{--sw:256px}
+  .layout,.collapsed .layout{grid-template-columns:minmax(0,1fr)}
+  .side{width:280px}
+  .collapsed .side .txt,.collapsed .findbtn kbd,.collapsed .nav .cnt,.collapsed .nav .grp .ico{display:initial}
+  .collapsed .nav .grp{height:auto;background:none;margin:0;padding:8px 4px 6px}
+  .collapsed .nav .it{justify-content:flex-start;padding:9px 14px}
+  .collapsed .findbtn{justify-content:flex-start;margin:0 12px 10px;padding:7px 10px}
+  .collapsed .nav .grp-w.shut > ul{display:none}
+  .collapsed .nav .grp-w > ul{padding-left:12px}
+}
+
 </style>
 </head>
 <body>
-<div id="splash" aria-hidden="true"><div class="sp-in"><div class="sp-logo"><svg viewBox="0 0 32 32"><defs><linearGradient id="slg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset=".5" stop-color="#5B8DEF"/><stop offset="1" stop-color="#A855F7"/></linearGradient></defs><circle cx="16" cy="16" r="12" fill="none" stroke="url(#slg)" stroke-width="3.5"/><path d="M10.5 16h11" stroke="url(#slg)" stroke-width="3.5" stroke-linecap="round"/></svg></div><div class="sp-t"><b>ERACORE</b> · LEARNING CENTER</div><div class="sp-bar"><i></i></div><div class="sp-s">Loading the Team Leader Raising Program</div></div></div>
+<div id="splash" aria-hidden="true"><div class="sp-in"><div class="sp-logo"><svg viewBox="0 0 32 32"><defs><linearGradient id="slg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset=".5" stop-color="#5B8DEF"/><stop offset="1" stop-color="#A855F7"/></linearGradient></defs><circle cx="16" cy="16" r="12" fill="none" stroke="url(#slg)" stroke-width="3.5"/><path d="M10.5 16h11" stroke="url(#slg)" stroke-width="3.5" stroke-linecap="round"/></svg></div><div class="sp-t"><b>ERACORE</b> · THE HUB</div><div class="sp-bar"><i></i></div><div class="sp-s">Loading the Team Leader Raising Program</div></div></div>
 <div id="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <div id="loadbar" aria-hidden="true"></div><div id="scrollbar" aria-hidden="true"></div>
 <header class="top">
   <button class="iconbtn mobile-only" id="menuBtn" aria-label="Open navigation" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-  <div class="logo">
-    <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5B8DEF"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs><circle cx="16" cy="16" r="13" fill="none" stroke="url(#lg)" stroke-width="4"/><path d="M10 16h12" stroke="url(#lg)" stroke-width="4" stroke-linecap="round"/></svg>
-    <span class="co">ERACORE</span><span class="sep co"></span><span class="app">Learning Center</span>
-  </div>
+  <a class="logo" href="#/" aria-label="The Hub dashboard">
+    <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5B8DEF"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs><circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="3.6"/><path d="M11 16h10" stroke="url(#lg)" stroke-width="3.6" stroke-linecap="round"/></svg>
+    <span class="co">ERACORE</span><span class="sep"></span><span class="app">THE HUB</span>
+  </a>
+  <div class="ttl"><h1 id="topT">Dashboard</h1><div class="tsub" id="topS"></div></div>
   <div class="grow"></div>
-  <button class="palbtn" id="palBtn" aria-label="Search everything"><svg class="ico" viewBox="0 0 24 24" style="width:16px;height:16px"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search everything…</span><kbd>Ctrl K</kbd></button>
   <button class="iconbtn" id="themeBtn" aria-label="Switch theme"></button>
-  <button class="iconbtn" id="bellBtn" aria-label="Items needing attention"><svg class="ico" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot" id="bellDot" hidden></span></button>
-  <button class="me" id="meBtn" aria-haspopup="menu" aria-expanded="false"><span class="avatar" id="meAv">CL</span><span class="name" id="meName"></span><span class="badge" id="meRole"></span><svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px;color:var(--muted)"><path d="m6 9 6 6 6-6"/></svg></button>
+  <button class="iconbtn" id="bellBtn" aria-label="Items needing attention"><svg class="ico" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bcount" id="bellDot" hidden></span></button>
+  <span class="rolepill" id="meRole"></span>
+  <button class="me" id="meBtn" aria-haspopup="menu" aria-expanded="false"><span class="avatar" id="meAv">CL</span><span class="name" id="meName"></span></button>
   <div class="menu" id="meMenu" role="menu" hidden></div>
+  <button class="iconbtn" id="outBtn" data-hubtoast="Sign out" aria-label="Sign out" title="Sign out"><svg class="ico" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg></button>
 </header>
 
 <div class="layout">
-  <aside class="side" id="side" aria-label="Course navigation"><ul class="nav" id="nav"></ul></aside>
+  <aside class="side" id="side" aria-label="Navigation">
+    <button class="findbtn" id="palBtn" aria-label="Find a page"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="txt">Find a page</span><kbd>/</kbd></button>
+    <ul class="nav" id="nav"></ul>
+    <div class="side-foot"><span class="txt">The Hub</span></div>
+  </aside>
   <main id="main" tabindex="-1"><div class="page" id="page"></div></main>
 </div>
 <button class="collapse" id="collapseBtn" aria-label="Collapse sidebar"><svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -1137,23 +1227,46 @@ const ic = (n, st="") => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true
 
 /* ---------- chrome ---------- */
 const NAV = [
-  {g:"PROGRAM",first:true},
-  {h:"#/",t:"Overview",i:"grid"},
-  {h:"#/map",t:"Program map",i:"map",cnt:()=>`${C.filter(c=>status(c.id)==="done").length}/15`},
-  {g:"DOCUMENTS"},
-  {h:"#/doc/program",t:"Leader Raising Program",i:"book",cnt:()=>`${readOf("program")}/${DOCS.program.sections.length}`},
-  {h:"#/doc/workflow",t:"Communication Workflow",i:"flow",cnt:()=>`${readOf("workflow")}/${DOCS.workflow.sections.length}`},
-  {h:"#/doc/standards",t:"Standards form",i:"form",cnt:()=>{const g=gapsList().length; return g?{v:g+" gaps",warn:true}:`${readOf("standards")}/${DOCS.standards.sections.length}`;}},
-  {h:"#/doc/candidate",t:"Scenario test",i:"check",cnt:()=>`${SC.filter(s=>scnState(s)==="full").length}/10`},
-  {h:"#/doc/mentor",t:"Mentor marking",i:"shield",cnt:()=>isMentor()?`${SC.filter(s=>(S.marks[s.id]||{}).ok).length}/10`:"Mentor"},
-  {g:"PRACTICE"},
-  {h:"#/drill",t:"Escalation drill",i:"route",cnt:()=>{const n=Object.keys(S.drill.r||{}).length; return n<COURSE.drill.length?`${n}/${COURSE.drill.length}`:"";}},
-  {h:"#/logs",t:"Decision & change logs",i:"log",cnt:()=>S.decisions.length+S.changes.length||""},
-  {g:"ASSESS"},
-  {h:"#/record",t:"Sign-off record",i:"award"},
-  {g:"ABOUT"},
-  {h:"#/engine",t:"How it's built",i:"cpu"}
+  {h:"#/",t:"Dashboard",i:"dash"},
+  {g:"My Hub"},
+  {hub:1,t:"My Workspace",i:"layout"},
+  {hub:1,t:"My Profile",i:"ucirc"},
+  {g:"My Growth"},
+  {hub:1,t:"Career Path",i:"trend"},
+  {h:"#/map",t:"My Learning",i:"book",d:"Team Leader Raising Program, all 15 competencies",cnt:()=>`${C.filter(c=>status(c.id)==="done").length}/15`},
+  {g:"Leadership Course"},
+  {h:"#/doc/program",t:"Leader Raising Program",i:"doc",d:"The full program document",cnt:()=>`${readOf("program")}/${DOCS.program.sections.length}`},
+  {h:"#/doc/workflow",t:"Communication Workflow",i:"flow",d:"How the team communicates and escalates",cnt:()=>`${readOf("workflow")}/${DOCS.workflow.sections.length}`},
+  {h:"#/doc/standards",t:"Standards form",i:"form",d:"The project standards you fill in",cnt:()=>{const g=gapsList().length; return g?{v:g+" gaps",warn:true}:`${readOf("standards")}/${DOCS.standards.sections.length}`;}},
+  {h:"#/doc/candidate",t:"Scenario test",i:"check",d:"Ten checkpoint scenarios",cnt:()=>`${SC.filter(s=>scnState(s)==="full").length}/10`},
+  {h:"#/doc/mentor",t:"Mentor marking",i:"shield",d:"The marking key for mentors",cnt:()=>isMentor()?`${SC.filter(s=>(S.marks[s.id]||{}).ok).length}/10`:"Mentor"},
+  {h:"#/drill",t:"Escalation drill",i:"route",d:"Route each situation to the right person",cnt:()=>{const n=Object.keys(S.drill.r||{}).length; return n<COURSE.drill.length?`${n}/${COURSE.drill.length}`:"";}},
+  {h:"#/logs",t:"Decision & change logs",i:"log",d:"Decisions and changes you have recorded",cnt:()=>S.decisions.length+S.changes.length||""},
+  {h:"#/record",t:"Sign-off record",i:"award",d:"Mentor sign-off for each competency"},
+  {h:"#/engine",t:"How it's built",i:"cpu",d:"How this course app is put together"},
+  {g:"Community"},
+  {hub:1,t:"Recognition",i:"trophy"},
+  {hub:1,t:"Announcements",i:"mega"},
+  {hub:1,t:"Company Feed",i:"feed"},
+  {hub:1,t:"Org Chart",i:"org"},
+  {g:"Time & Leave"},
+  {hub:1,t:"Attendance",i:"clock"},
+  {hub:1,t:"Leave",i:"plane"},
+  {hub:1,t:"Overtime",i:"otime"},
+  {hub:1,t:"Team Calendar",i:"cal"},
+  {g:"People & Org"},
+  {hub:1,t:"Benefits & Claims",i:"benefit"},
+  {hub:1,t:"Company Policies",i:"gavel"},
+  {hub:1,t:"Get Involved",i:"hands"},
+  {hub:1,t:"Offboarding",i:"exit"},
+  {hub:1,t:"Performance",i:"bars"},
+  {hub:1,t:"Report A Concern",i:"alert"}
 ];
+const navBase = () => { const p=parse(); return p.view==="c" ? "#/map" : p.view==="doc" ? "#/doc/"+p.arg : p.view==="home" ? "#/" : "#/"+p.view; };
+function pageHead(){ const p=parse();
+  if (p.view==="home") return ["Dashboard","Everything waiting on you today, at a glance."];
+  if (p.view==="c"){ const c=C.find(x=>String(x.id)===String(p.arg)); return c?[`Competency ${c.id}`,c.title]:["My Learning",""]; }
+  const n=NAV.find(x=>x.h===navBase()); return n?[n.t,n.d||""]:["The Hub",""]; }
 function renderChrome(){
   document.documentElement.setAttribute("data-theme", S.ui.theme);
   document.body.classList.toggle("collapsed", !!S.ui.collapsed);
@@ -1161,18 +1274,26 @@ function renderChrome(){
   $("#themeBtn").title = S.ui.theme==="dark"?"Light mode":"Dark mode";
   $("#meAv").textContent = initials(S.profile.name);
   $("#meName").textContent = S.profile.name;
-  $("#meRole").textContent = isMentor()?"MENTOR":"CANDIDATE";
-  $("#meRole").className = "badge"+(isMentor()?" mentor":"");
-  $("#bellDot").hidden = attention().length===0;
-  $("#nav").innerHTML = NAV.map(n=>{
-    if (n.g) return `<li class="grp${n.first?" first":""}"><span>${n.g}</span></li>`;
+  $("#meRole").textContent = isMentor()?"Mentor":"Candidate";
+  $("#meRole").className = "rolepill"+(isMentor()?" mentor":"");
+  const na=attention().length; $("#bellDot").hidden = na===0; $("#bellDot").textContent = na;
+  const [tt,ts]=pageHead(); $("#topT").textContent=tt; $("#topS").textContent=ts;
+  const closed=S.ui.navClosed||{}, item=n=>{
+    if (n.hub) return `<li><button class="it" type="button" data-hubtoast="${n.t}" title="${n.t}">${ic(n.i)}<span class="txt">${n.t}</span></button></li>`;
     let c = n.cnt ? n.cnt() : ""; let warn=false; if (c && typeof c==="object"){ warn=c.warn; c=c.v; }
-    return `<li><a href="${n.h}" title="${n.t}">${ic(n.i)}<span class="txt">${n.t}</span>${c!==""&&c!=null?`<span class="cnt${warn?" warn":""}">${c}</span>`:""}</a></li>`;
-  }).join("");
+    return `<li><a class="it" href="${n.h}" title="${n.t}">${ic(n.i)}<span class="txt">${n.t}</span>${warn&&c?`<span class="cnt warn">${c}</span>`:""}</a></li>`; };
+  let out="", open=null;
+  NAV.forEach(n=>{
+    if (n.g){ if(open!==null) out+=`</ul></li>`; open=n.g; const sh=!closed[n.g];
+      out+=`<li class="grp-w${sh?"":" shut"}"><button class="grp" type="button" data-navgrp="${n.g}" aria-expanded="${sh}"><span class="txt">${n.g}</span>${ic("down")}</button><ul>`; return; }
+    out+=item(n);
+  });
+  if (open!==null) out+=`</ul></li>`;
+  $("#nav").innerHTML = out;
   markNav(); if (typeof watch==="function") watch();
 }
 function markNav(){
-  const p=parse(); const base = p.view==="c" ? "#/map" : p.view==="doc" ? "#/doc/"+p.arg : p.view==="home" ? "#/" : "#/"+p.view;
+  const base = navBase();
   $$("#nav a").forEach(a=> a.getAttribute("href")===base ? a.setAttribute("aria-current","page") : a.removeAttribute("aria-current"));
 }
 function renderMenu(){
@@ -1266,6 +1387,21 @@ const ring = (pct, col="var(--green)", size=120, label="") => { const r=48, L=2*
 
 /* ============================================================ VIEWS ============================================================ */
 const V = {};
+
+/* ============================================================ HUB CHROME (sidebar + top bar icons) ============================================================ */
+Object.assign(I, {
+  dash:'<rect x="3.5" y="3.5" width="7" height="9" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="5" rx="1.5"/><rect x="13.5" y="11.5" width="7" height="9" rx="1.5"/><rect x="3.5" y="15.5" width="7" height="5" rx="1.5"/>',
+  ucirc:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18.5c1.2-2 3.1-3 5.5-3s4.3 1 5.5 3"/>',
+  trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7M10 17h4"/>',
+  feed:'<rect x="7" y="3.5" width="13.5" height="11" rx="2"/><path d="M4 7.5v10a3 3 0 0 0 3 3h10M10.5 7.5h6.5M10.5 11h4"/>',
+  plane:'<path d="M3 20h18"/><path d="m4 13 2.3-.6 2.6 2.6 4.5-1.3-5.3-6.5 2.4-.7 7.2 5.4 3.1-.9a1.6 1.6 0 1 1 .9 3.1L6.7 18.3 3.2 14.6z"/>',
+  otime:'<path d="M20.5 12A8.5 8.5 0 1 1 12 3.5c2.5 0 4.7 1 6.2 2.7"/><path d="M19 3v4h-4M12 8v4l2.5 2"/>',
+  benefit:'<path d="M12 3 4.5 6v5.5c0 4.6 3.1 8.3 7.5 9.5 4.4-1.2 7.5-4.9 7.5-9.5V6z"/><path d="M12 15.5s-3.5-2-3.5-4.3a1.9 1.9 0 0 1 3.5-1 1.9 1.9 0 0 1 3.5 1c0 2.3-3.5 4.3-3.5 4.3z"/>',
+  hands:'<path d="M3 15h3l4 1.5h3.5a1.5 1.5 0 0 1 0 3H9"/><path d="M13.5 18.5 19 16a1.5 1.5 0 0 1 1.5 2.5L14 21.5H3"/><circle cx="15.5" cy="6" r="2.5"/><circle cx="9" cy="8" r="2"/>',
+  exit:'<path d="M14 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H14"/><path d="m16 8 4 4-4 4M20 12H10"/>',
+  bars:'<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M8 16.5v-5M12 16.5v-9M16 16.5v-3"/>',
+  down:'<path d="m6 9 6 6 6-6"/>'
+});
 
 /* ============================================================ HUB DASHBOARD (front page) — barebones active version ============================================================
    A one-to-one copy of The Hub's dashboard (hub.eracore.com/home) in the course's design system: same cards, same
@@ -2166,6 +2302,7 @@ document.addEventListener("click",e=>{
     return; }
   if (cl("#themeBtn")){ themeSwitch(e); return; }
   if (cl("#bellBtn")){ location.hash="#/"; setTimeout(()=>{ const c=$("#hubTasks"); c&&c.scrollIntoView({behavior:"smooth",block:"center"}); },50); return; }
+  const ng=cl("[data-navgrp]"); if (ng){ const g=ng.dataset.navgrp, c=S.ui.navClosed=S.ui.navClosed||{}; c[g]=!c[g]; save(); renderChrome(); return; }
   if (cl("#collapseBtn")){ S.ui.collapsed=!S.ui.collapsed; save(); renderChrome(); return; }
   if (cl("#menuBtn")){ const s=$("#side"), o=!s.classList.contains("open"); s.classList.toggle("open",o); $("#menuBtn").setAttribute("aria-expanded",String(o)); return; }
   if (t.closest(".side a")) closeSide();

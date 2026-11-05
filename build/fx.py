@@ -4,16 +4,13 @@ def rep(a,b,cnt=1):
     global t
     assert t.count(a)==cnt,(t.count(a),a[:90]); t=t.replace(a,b)
 # CSS at end of style
-rep("</style>\n</head>", open('fx.css').read()+"\n</style>\n</head>")
+rep("</style>\n</head>", open('fx.css').read()+"\n"+open('chrome.css').read()+"\n</style>\n</head>")
 # body additions
 rep('<body>\n<header class="top">','''<body>
-<div id="splash" aria-hidden="true"><div class="sp-in"><div class="sp-logo"><svg viewBox="0 0 32 32"><defs><linearGradient id="slg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset=".5" stop-color="#5B8DEF"/><stop offset="1" stop-color="#A855F7"/></linearGradient></defs><circle cx="16" cy="16" r="12" fill="none" stroke="url(#slg)" stroke-width="3.5"/><path d="M10.5 16h11" stroke="url(#slg)" stroke-width="3.5" stroke-linecap="round"/></svg></div><div class="sp-t"><b>ERACORE</b> · LEARNING CENTER</div><div class="sp-bar"><i></i></div><div class="sp-s">Loading the Team Leader Raising Program</div></div></div>
+<div id="splash" aria-hidden="true"><div class="sp-in"><div class="sp-logo"><svg viewBox="0 0 32 32"><defs><linearGradient id="slg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset=".5" stop-color="#5B8DEF"/><stop offset="1" stop-color="#A855F7"/></linearGradient></defs><circle cx="16" cy="16" r="12" fill="none" stroke="url(#slg)" stroke-width="3.5"/><path d="M10.5 16h11" stroke="url(#slg)" stroke-width="3.5" stroke-linecap="round"/></svg></div><div class="sp-t"><b>ERACORE</b> · THE HUB</div><div class="sp-bar"><i></i></div><div class="sp-s">Loading the Team Leader Raising Program</div></div></div>
 <div id="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <div id="loadbar" aria-hidden="true"></div><div id="scrollbar" aria-hidden="true"></div>
 <header class="top">''')
-rep('<div class="grow"></div>\n  <button class="iconbtn" id="themeBtn"','''<div class="grow"></div>
-  <button class="palbtn" id="palBtn" aria-label="Search everything"><svg class="ico" viewBox="0 0 24 24" style="width:16px;height:16px"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search everything…</span><kbd>Ctrl K</kbd></button>
-  <button class="iconbtn" id="themeBtn"''')
 rep('<div class="toast" id="toast" role="status"></div>','''<div class="toast" id="toast" role="status"></div>
 <div class="overlay" id="modal"></div><div class="overlay" id="pal"></div><canvas id="fx" aria-hidden="true"></canvas>
 <button id="totop" aria-label="Back to top"><svg class="ico" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></svg></button>''')
@@ -28,9 +25,9 @@ rep('''  renderChrome(); if(keep){ window.scrollTo(0,y); if(fs){ const n=$(fs); 
 # loadbar on navigation
 rep('''window.addEventListener("hashchange",()=>{ const {view,arg}=parse();''','''window.addEventListener("hashchange",()=>{ loadStart(); const {view,arg}=parse();''')
 # watcher in renderChrome
-rep('''  }).join("");
+rep('''  $("#nav").innerHTML = out;
   markNav();
-}''','''  }).join("");
+}''','''  $("#nav").innerHTML = out;
   markNav(); if (typeof watch==="function") watch();
 }''')
 rep('S=sample(); S.ui.theme=th;','SNAP=null; S=sample(); S.ui.theme=th; S.ui.welcomed=true;')
