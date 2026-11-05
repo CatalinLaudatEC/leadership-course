@@ -46,3 +46,65 @@ document.addEventListener("click", e=>{
 });
 document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ const b=$("#tclock"); if(b) b.classList.remove("open"); } });
 document.addEventListener("click", e=>{ const f=e.target.closest("[data-clockfmt]"); if(!f) return; S.ui.clockFmt=f.dataset.clockfmt; save(); renderTopClock(); });
+
+/* ---------- internet speed test (Cloudflare's open-source @cloudflare/speedtest, loaded only when a test starts) ---------- */
+Object.assign(I, { gauge:'<path d="M3.5 16a8.5 8.5 0 1 1 17 0"/><path d="m12 16 4-5"/><circle cx="12" cy="16" r="1.4"/><path d="M6 16h.5M17.5 16h.5M12 7.5V8"/>' });
+const SPD_LIB = "https://cdn.jsdelivr.net/npm/@cloudflare/speedtest@1.14.2/+esm";
+const SPD_PLAN = [
+  {type:"latency",numPackets:1},{type:"download",bytes:1e5,count:1,bypassMinDuration:true},{type:"latency",numPackets:20},
+  {type:"download",bytes:1e5,count:9},{type:"download",bytes:1e6,count:8},{type:"upload",bytes:1e5,count:8},
+  {type:"upload",bytes:1e6,count:6},{type:"download",bytes:1e7,count:6},{type:"upload",bytes:1e7,count:4},
+  {type:"download",bytes:2.5e7,count:4},{type:"upload",bytes:2.5e7,count:4},{type:"download",bytes:1e8,count:3},{type:"upload",bytes:5e7,count:3}
+];
+let spdRun=null, spdLive=null, spdPhase="", spdErr="";
+const mbps = b => b==null||isNaN(b) ? "–" : (b/1e6>=100 ? Math.round(b/1e6) : (b/1e6).toFixed(1));
+const msTxt = v => v==null||isNaN(v) ? "–" : Math.round(v);
+const SPD_Q = {bad:["Bad","bad"],poor:["Poor","bad"],average:["Okay","warn"],good:["Good","ok"],great:["Great","ok"]};
+function spdUses(r){
+  if (!r) return [];
+  const q = k => (r.sc && r.sc[k] && SPD_Q[r.sc[k]]) || null;
+  const d=r.d/1e6, u=r.u/1e6, big = d>=100&&u>=20 ? ["Great","ok"] : d>=40&&u>=10 ? ["Good","ok"] : d>=15&&u>=5 ? ["Slow","warn"] : ["Too slow","bad"];
+  return [["Teams calls and screen sharing", q("rtc")], ["Video and streaming", q("streaming")], ["Syncing models (ACC, Revit cloud)", big]].filter(x=>x[1]);
+}
+function renderSpeed(){ const pop=$("#spdPop"); if(!pop) return;
+  const r = spdLive || (S.ui && S.ui.speed) || null, running=!!spdRun;
+  const when = !running && r && r.t ? `Last tested ${fmtAgo(r.t)}` : running ? (spdPhase||"Starting…") : "Not tested yet";
+  pop.innerHTML = `<div class="sp-card">
+    <div class="sp-head"><div><b>Internet speed</b><span>${esc(when)}</span></div>${running?`<span class="sp-live"><i></i>Testing</span>`:""}</div>
+    <div class="sp-big">
+      <div class="sp-m dl"><small>${ic("arrow","width:13px;height:13px;transform:rotate(90deg)")}Download</small><b>${r?mbps(r.d):"–"}</b><em>Mbps</em></div>
+      <div class="sp-m ul"><small>${ic("arrow","width:13px;height:13px;transform:rotate(-90deg)")}Upload</small><b>${r?mbps(r.u):"–"}</b><em>Mbps</em></div>
+    </div>
+    <div class="sp-small"><span>Ping <b>${r?msTxt(r.p):"–"}</b> ms</span><span>Jitter <b>${r?msTxt(r.j):"–"}</b> ms</span>${r&&r.colo?`<span>Server <b>${esc(r.colo)}</b></span>`:""}${r&&r.isp?`<span>Provider <b>${esc(r.isp)}</b></span>`:""}</div>
+    ${running?`<div class="sp-bar"><i style="width:${Math.round((spdLive&&spdLive.pct||0)*100)}%"></i></div>`:""}
+    ${!running&&r?`<div class="sp-uses">${spdUses(r).map(([t,[l,k]])=>`<div><span>${esc(t)}</span><em class="${k}">${l}</em></div>`).join("")}</div>`:""}
+    ${spdErr?`<p class="sp-err">${esc(spdErr)}</p>`:""}
+    <button type="button" class="btn sp-go" id="spdGo">${running?"Stop test":r?"Run again":"Start test"}</button>
+    <div class="sp-foot">Measured against Cloudflare's nearest server. Takes about 20 seconds and uses roughly 400 MB on a fast line.</div>
+  </div>`;
+}
+function fmtAgo(t){ const s=Math.round((Date.now()-t)/1000); if(s<60) return "just now"; const m=Math.round(s/60); if(m<60) return `${m} min ago`; const h=Math.round(m/60); if(h<24) return `${h} h ago`; return new Date(t).toLocaleDateString("en-US",{month:"short",day:"numeric"}); }
+async function startSpeed(){
+  spdErr=""; spdLive={pct:0}; spdPhase="Loading the test…"; spdRun="loading"; $("#spdBtn").classList.add("running"); renderSpeed();
+  let SpeedTest; try { SpeedTest=(await import(SPD_LIB)).default; } catch(e){ spdRun=null; spdLive=null; spdErr="Couldn't load the speed test. Check the connection or a firewall blocking cdn.jsdelivr.net."; $("#spdBtn").classList.remove("running"); renderSpeed(); return; }
+  if (spdRun!=="loading") return;
+  const t=new SpeedTest({autoStart:false, measurements:SPD_PLAN});
+  spdRun=t; let done=0; const total=SPD_PLAN.length;
+  fetch("https://speed.cloudflare.com/meta").then(r=>r.json()).then(m=>{ if(!spdLive) return; spdLive.colo=(m.colo&&m.colo.city)||""; spdLive.isp=m.asOrganization||""; }).catch(()=>{});
+  t.onResultsChange = ({type}) => { if(!spdLive) return; const s=t.results.getSummary(); done++;
+    spdPhase = type==="latency"?"Measuring ping…":type==="download"?"Measuring download…":type==="upload"?"Measuring upload…":"Testing…";
+    Object.assign(spdLive,{d:s.download,u:s.upload,p:s.latency,j:s.jitter,pct:Math.min(.97,done/(total*6))}); renderSpeed(); };
+  t.onFinish = res => { const s=res.getSummary(); let sc={}; try{ const g=res.getScores(); Object.keys(g).forEach(k=>sc[k]=g[k].classificationName); }catch(e){}
+    S.ui.speed={d:s.download,u:s.upload,p:s.latency,j:s.jitter,sc,colo:(spdLive&&spdLive.colo)||"",isp:(spdLive&&spdLive.isp)||"",t:Date.now()}; save();
+    spdRun=null; spdLive=null; $("#spdBtn").classList.remove("running"); renderSpeed(); toast(`Download ${mbps(s.download)} Mbps · Upload ${mbps(s.upload)} Mbps`); };
+  t.onError = e => { spdErr="The test was interrupted. Try again."; };
+  t.play();
+}
+function stopSpeed(){ if(spdRun && spdRun!=="loading") try{ spdRun.pause(); }catch(e){} spdRun=null; spdLive=null; spdPhase=""; $("#spdBtn").classList.remove("running"); renderSpeed(); }
+document.addEventListener("click", e=>{
+  const box=$("#spd"); if(!box) return;
+  if (e.target.closest("#spdGo")){ spdRun?stopSpeed():startSpeed(); return; }
+  if (e.target.closest("#spdBtn")){ const o=!box.classList.contains("open"); box.classList.toggle("open",o); $("#spdBtn").setAttribute("aria-expanded",String(o)); if(o) renderSpeed(); return; }
+  if (!e.target.closest("#spd")){ box.classList.remove("open"); $("#spdBtn").setAttribute("aria-expanded","false"); }
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ const b=$("#spd"); if(b) b.classList.remove("open"); } });
