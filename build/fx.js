@@ -31,7 +31,7 @@ document.addEventListener("pointerdown",e=>{ if(RM) return; const b=e.target.clo
   const r=b.getBoundingClientRect(), s=Math.max(r.width,r.height), sp=document.createElement("span"); sp.className="ripple"; sp.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;
   if(getComputedStyle(b).position==="static") b.style.position="relative"; b.style.overflow="hidden"; b.appendChild(sp); setTimeout(()=>sp.remove(),700); },{passive:true});
 /* tilt + spotlight */
-const TILT=".kpi,.hstat,.wclock,.doctile,.ccard,.lvlcard,.dg-week,.dg-box,.dg-cp,.choices button:not(:disabled),.rule,.jump a,.subhead,.flow button,.slist button";
+const TILT=".kpi,.hstat,.doctile,.ccard,.lvlcard,.dg-week,.dg-box,.dg-cp,.choices button:not(:disabled),.rule,.jump a,.subhead,.flow button,.slist button";
 let curTilt=null;
 function resetTilt(el){ if(!el) return; el.classList.remove("tilting"); el.style.transform=""; }
 document.addEventListener("pointermove",e=>{

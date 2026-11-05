@@ -24,7 +24,7 @@ function tzDiff(tz, base){ const m=tzOffsetMin(tz)-tzOffsetMin(base); if(!m) ret
   const a=Math.abs(m), h=Math.floor(a/60), mm=a%60; return {t:`${m>0?"+":"−"}${h}${mm?`:${String(mm).padStart(2,"0")}`:""}h`,k:m>0?"ahead":"behind"}; }
 const topTz = () => (S && S.ui && S.ui.topTz) || "America/New_York";
 function renderTopClock(){ const box=$("#tclock"); if(!box) return; const sel=topTz();
-  $("#tcPop").innerHTML = `<div class="tc-head"><b>World time</b><span>Compared with ${esc(tzAbbr(sel))}</span></div>
+  $("#tcPop").innerHTML = `<div class="tc-head"><div><b>World time</b><span>Compared with ${esc(tzAbbr(sel))}</span></div><div class="tc-fmt" role="group" aria-label="Time format"><button type="button" data-clockfmt="12" aria-pressed="${!clock24()}">12h</button><button type="button" data-clockfmt="24" aria-pressed="${clock24()}">24h</button></div></div>
     <div class="tc-list">${TZ_ALL().map(([n,tz])=>`<button type="button" class="tc-row${tz===sel?" on":""}" data-tz-pick="${tz}" role="option" aria-selected="${tz===sel}">
       <span class="tc-ab">${esc(tz==="America/New_York"?tzAbbr(tz):n.slice(0,2).toUpperCase())}</span>
       <span class="tc-nm"><b>${esc(n)}</b><small>${esc(tzCity(tz))} · <i data-tcd></i></small></span>
@@ -45,4 +45,4 @@ document.addEventListener("click", e=>{
   if (!e.target.closest("#tclock")) { box.classList.remove("open"); $("#tcBtn").setAttribute("aria-expanded","false"); }
 });
 document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ const b=$("#tclock"); if(b) b.classList.remove("open"); } });
-document.addEventListener("change", e=>{ if (e.target.id==="clockFmt") tickTopClock(); });
+document.addEventListener("click", e=>{ const f=e.target.closest("[data-clockfmt]"); if(!f) return; S.ui.clockFmt=f.dataset.clockfmt; save(); renderTopClock(); });

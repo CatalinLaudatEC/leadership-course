@@ -244,11 +244,11 @@ A one-to-one copy of The Hub's dashboard (hub.eracore.com/home) in the course's 
   - Pending Tasks (2): Upload your government ID, AI Innovation, and "Go To My Workspace".
   - Recent Announcements (0): "Nothing new to read."
   - Upcoming Events: "Nothing coming up in the next few weeks."
-- **World Clock:** 8 regions with live analog and digital clocks. The 12-Hour/24-Hour select defaults to 24-Hour and is saved as `S.ui.clockFmt`.
+- **World time:** the dashboard has no clock widget. Time zones live in the top-bar world-time chip, whose panel also holds the 12h/24h toggle (`S.ui.clockFmt`, 24h by default).
 - **Behaviour:**
   - Every Hub-only link shows a toast instead of navigating away.
   - The first "View All" and the bell scroll to the Pending Tasks card.
-- **Responsive:** below 1480px the clocks move under the dashboard. At ≤1100px the cards drop to 2 columns, and at ≤860px to 1.
+- **Responsive:** at ≤1100px the cards drop to 2 columns, and at ≤860px to 1.
 - **Enhanced version:** the earlier version is kept as the git tag `dashboard-enhanced`. It adds a course feed, activity stats, day/night clocks and upcoming program milestones.
 
 ### Program map (`#/map`)

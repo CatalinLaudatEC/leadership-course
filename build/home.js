@@ -78,19 +78,10 @@ function activityChart(off){
   return `<svg class="actchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Hubstaff working activity for the week of ${fmtMD(mon)}">${grid}${axes}${areas}${dots}${xl}</svg>`;
 }
 
-/* ---------- world clock ---------- */
+/* ---------- time helpers (used by the top-bar clock) ---------- */
 const clock24 = () => S.ui.clockFmt!=="12";
 function tzParts(tz){ const p={}; new Intl.DateTimeFormat("en-US",{timeZone:tz,hour:"numeric",minute:"numeric",second:"numeric",hourCycle:"h23",weekday:"short",day:"numeric",month:"short"}).formatToParts(new Date()).forEach(x=>p[x.type]=x.value); return {h:+p.hour%24,m:+p.minute,s:+p.second,date:`${p.weekday} ${p.day} ${p.month}`}; }
 function clockText(h,m){ const mm=String(m).padStart(2,"0"); return clock24() ? `${String(h).padStart(2,"0")}:${mm}` : `${h%12||12}:${mm}<small>${h<12?"AM":"PM"}</small>`; }
-function clockFace(){ let ticks=""; for(let i=0;i<12;i++){ const a=i*30*Math.PI/180, r1=26.5, r2=29.5; ticks+=`<line x1="${32+r1*Math.sin(a)}" y1="${32-r1*Math.cos(a)}" x2="${32+r2*Math.sin(a)}" y2="${32-r2*Math.cos(a)}" class="tk"/>`; }
-  return `<svg class="face" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="31" class="rim"/>${ticks}<line class="hh" x1="32" y1="32" x2="32" y2="17"/><line class="mh" x1="32" y1="32" x2="32" y2="9"/><line class="sh" x1="32" y1="37" x2="32" y2="7"/><circle cx="32" cy="32" r="2.4" class="hub-dot"/></svg>`; }
-function tickClocks(){ const box=$("#wclocks"); if(!box) return;
-  box.querySelectorAll(".wclock").forEach(el=>{ const {h,m,s,date}=tzParts(el.dataset.tz);
-    const set=(sel,deg)=>{ const n=el.querySelector(sel); if(n) n.setAttribute("transform",`rotate(${deg} 32 32)`); };
-    set(".hh",(h%12)*30+m*.5); set(".mh",m*6+s*.1); set(".sh",s*6);
-    el.querySelector(".tm").innerHTML=clockText(h,m); el.querySelector(".dt").textContent=date; });
-}
-setInterval(tickClocks, 1000);
 
 /* ---------- view ---------- */
 V.home = () => {
@@ -100,7 +91,6 @@ V.home = () => {
   const stat=(o)=>`<div class="card hstat"><div class="hs-h"><span class="tile">${ic(o.i)}</span><h2>${o.title}</h2>${o.badge!=null?`<span class="hcount green">${o.badge}</span>`:""}</div>
       <div class="hs-b">${o.body}</div><div class="hs-f">${o.foot}</div></div>`;
   const weeks=[...Array(HUB.weeks)].map((_,o)=>{ const m=weekMonday(o), e=new Date(m); e.setDate(m.getDate()+6); return `<option value="${o}" ${o===hubWeek?"selected":""}>${fmtMD(m)} – ${fmtMD(e)}</option>`; }).join("");
-  queueMicrotask(tickClocks);
   return `
   <div class="hub">
     <div class="hub-head">
@@ -144,11 +134,6 @@ V.home = () => {
       </div>
     </div>
 
-    <aside class="card hub-clock" aria-label="World clock">
-      <div class="hc-h"><span class="hc-ic">${ic("globe","width:18px;height:18px")}</span><div class="hc-t"><h2>World Clock</h2><div class="hsub">Local time across our regions.</div></div>
-        <label class="hsel hc-fmt">${ic("clock","width:15px;height:15px")}<select id="clockFmt" aria-label="Time format"><option value="12" ${clock24()?"":"selected"}>12-Hour</option><option value="24" ${clock24()?"selected":""}>24-Hour</option></select></label></div>
-      <div class="wclocks" id="wclocks">${HUB.clocks.map(([n,tz])=>`<div class="wclock" data-tz="${tz}" title="${tz.replace("_"," ")}"><div class="wc-n">${esc(n)}</div>${clockFace()}<div class="tm"></div><div class="dt"></div></div>`).join("")}</div>
-    </aside>
   </div>`;
 };
 
@@ -161,5 +146,4 @@ document.addEventListener("click", e=>{
 let hubCompact=compactChart(); window.addEventListener("resize",()=>{ const c=compactChart(); if(c!==hubCompact){ hubCompact=c; if(parse().view==="home") render(true); } });
 document.addEventListener("change", e=>{
   if (e.target.id==="hubWeek"){ hubWeek=+e.target.value; render(true); }
-  if (e.target.id==="clockFmt"){ S.ui.clockFmt=e.target.value; save(); tickClocks(); }
 });
