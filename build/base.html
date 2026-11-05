@@ -384,8 +384,7 @@ pre{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;
   <div class="tclock" id="tclock"><button class="tc-btn" id="tcBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="World time"><span class="tc-ic"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="tc-txt"><b id="tcTime"></b><span><em id="tcZone">EST</em><span id="tcDate"></span></span></span><svg class="ico" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button><div class="tc-pop" id="tcPop" role="listbox" aria-label="Time zones"></div></div>
   <button class="iconbtn" id="themeBtn" aria-label="Switch theme"></button>
   <button class="iconbtn" id="bellBtn" aria-label="Items needing attention"><svg class="ico" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bcount" id="bellDot" hidden></span></button>
-  <span class="rolepill" id="meRole"></span>
-  <button class="me" id="meBtn" aria-haspopup="menu" aria-expanded="false"><span class="avatar" id="meAv">CL</span><span class="name" id="meName"></span></button>
+  <button class="me" id="meBtn" aria-haspopup="menu" aria-expanded="false"><span class="avatar" id="meAv">CL</span><span class="me-t"><span class="name" id="meName"></span><span class="me-role" id="meRole"></span></span><svg class="ico me-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
   <div class="menu" id="meMenu" role="menu" hidden></div>
   <button class="iconbtn" id="outBtn" data-hubtoast="Sign out" aria-label="Sign out" title="Sign out"><svg class="ico" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg></button>
 </header>
@@ -517,7 +516,7 @@ function renderChrome(){
   $("#meAv").textContent = initials(S.profile.name);
   $("#meName").textContent = S.profile.name;
   $("#meRole").textContent = isMentor()?"Mentor":"Candidate";
-  $("#meRole").className = "rolepill"+(isMentor()?" mentor":"");
+  $("#meRole").className = "me-role"+(isMentor()?" mentor":"");
   const na=attention().length; $("#bellDot").hidden = na===0; $("#bellDot").textContent = na;
   const [tt,ts]=pageHead(); $("#topT").textContent=tt; $("#topS").textContent=ts;
   const closed=S.ui.navClosed||{}, item=n=>{

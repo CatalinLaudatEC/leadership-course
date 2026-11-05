@@ -869,13 +869,6 @@ mark{animation:popIn .35s var(--spring);box-shadow:0 0 12px -2px rgba(240,166,58
 .top .iconbtn{color:var(--text)}
 .bcount{position:absolute;top:2px;right:2px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--red);color:#fff;font-size:.66rem;font-weight:700;display:grid;place-items:center;border:2px solid var(--side);line-height:1}
 .bcount[hidden]{display:none}
-.rolepill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:600;color:var(--green);background:var(--green-soft);border:1px solid color-mix(in srgb,var(--green) 40%,transparent);white-space:nowrap}
-.rolepill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
-.rolepill.mentor{color:var(--amber);background:var(--amber-soft);border-color:color-mix(in srgb,var(--amber) 40%,transparent)}
-.top .me{gap:10px;padding:5px 16px 5px 5px;border-radius:999px;background:var(--panel-2);border:1px solid var(--border)}
-.top .me:hover{border-color:color-mix(in srgb,var(--blue) 45%,var(--border));background:var(--panel-2)}
-.top .me .avatar{width:30px;height:30px;font-size:.74rem;font-weight:700;background:var(--blue-soft);color:var(--blue);box-shadow:none}
-.top .me .name{font-weight:500;font-size:.9rem;color:var(--text);white-space:nowrap}
 .top .menu{right:60px}
 
 /* sidebar: search, collapsible groups, footer */
@@ -915,14 +908,12 @@ mark{animation:popIn .35s var(--spring);box-shadow:0 0 12px -2px rgba(240,166,58
 .collapsed .nav .it{justify-content:center;padding:10px 0}
 .collapsed .side-foot{text-align:center;padding:14px 0}
 
-@media (max-width:1100px){ .rolepill{display:none} }
 @media (max-width:860px){
   .top{padding:0 8px 0 4px;gap:4px}
   .top .logo,.collapsed .top .logo{width:auto;border-right:0;padding:0 6px}
   .top .logo .co,.top .logo .sep,.top .logo .app{display:none}
   .tsub{display:none}
   .ttl{padding-left:2px}
-  .top .me{padding:3px;background:transparent;border-color:transparent}
   .top .menu{right:8px}
   .collapsed{--sw:256px}
   .layout,.collapsed .layout{grid-template-columns:minmax(0,1fr)}
@@ -979,6 +970,36 @@ mark{animation:popIn .35s var(--spring);box-shadow:0 0 12px -2px rgba(240,166,58
 @media (max-width:600px){ .tc-pop{position:fixed;left:8px;right:8px;top:calc(56px + env(safe-area-inset-top,0px));width:auto} }
 @media (max-width:480px){ #outBtn{display:none} .tclock{margin-right:0} }
 
+/* one shape for every top-bar control: 44px tall, 12px corners, same surface and border */
+.top{--tb-h:44px}
+.top .iconbtn:not(.mobile-only),.tc-btn,.top .me{height:var(--tb-h);border-radius:12px;border:1px solid var(--border);background:var(--panel-2);color:var(--text);transition:border-color .2s,box-shadow .3s,background .2s}
+.top .iconbtn:not(.mobile-only){width:var(--tb-h)}
+.top .iconbtn:not(.mobile-only):hover,.tc-btn:hover,.top .me:hover,.top .me[aria-expanded="true"],.tclock.open .tc-btn{border-color:color-mix(in srgb,var(--blue) 55%,var(--border));box-shadow:0 0 0 3px var(--blue-soft);background:var(--panel-2)}
+.tc-btn{padding:0 12px 0 7px;background:var(--panel-2)}
+.tc-ic,.top .me .avatar{width:30px;height:30px;border-radius:9px}
+.bcount{top:-5px;right:-5px}
+
+/* profile: avatar, then name with the role underneath */
+.top .me{display:flex;align-items:center;gap:10px;padding:0 10px 0 7px}
+.top .me .avatar{font-size:.74rem;font-weight:700;background:var(--blue-soft);color:var(--blue);box-shadow:none}
+.me-t{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;min-width:0}
+.top .me .name{font-weight:600;font-size:.88rem;color:var(--text);white-space:nowrap}
+.me-role{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;letter-spacing:.02em;color:var(--green);white-space:nowrap}
+.me-role::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px var(--green-soft)}
+.me-role.mentor{color:var(--amber)}
+.me-role.mentor::before{box-shadow:0 0 0 3px var(--amber-soft)}
+.me-chev{width:13px;height:13px;color:var(--muted);transition:transform .2s}
+.top .me[aria-expanded="true"] .me-chev{transform:rotate(180deg)}
+.top .menu{top:62px;right:66px}
+@media (max-width:860px){
+  .top{--tb-h:38px}
+  .me-t,.me-chev{display:none}
+  .top .me{padding:0 3px}
+  .top .iconbtn:not(.mobile-only),.tc-btn,.top .me{border-radius:10px}
+  .tc-btn{padding:0 9px}
+}
+@media (max-width:480px){ .top{gap:3px} .top .iconbtn:not(.mobile-only){width:34px} }
+
 </style>
 </head>
 <body>
@@ -996,8 +1017,7 @@ mark{animation:popIn .35s var(--spring);box-shadow:0 0 12px -2px rgba(240,166,58
   <div class="tclock" id="tclock"><button class="tc-btn" id="tcBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="World time"><span class="tc-ic"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="tc-txt"><b id="tcTime"></b><span><em id="tcZone">EST</em><span id="tcDate"></span></span></span><svg class="ico" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button><div class="tc-pop" id="tcPop" role="listbox" aria-label="Time zones"></div></div>
   <button class="iconbtn" id="themeBtn" aria-label="Switch theme"></button>
   <button class="iconbtn" id="bellBtn" aria-label="Items needing attention"><svg class="ico" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bcount" id="bellDot" hidden></span></button>
-  <span class="rolepill" id="meRole"></span>
-  <button class="me" id="meBtn" aria-haspopup="menu" aria-expanded="false"><span class="avatar" id="meAv">CL</span><span class="name" id="meName"></span></button>
+  <button class="me" id="meBtn" aria-haspopup="menu" aria-expanded="false"><span class="avatar" id="meAv">CL</span><span class="me-t"><span class="name" id="meName"></span><span class="me-role" id="meRole"></span></span><svg class="ico me-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
   <div class="menu" id="meMenu" role="menu" hidden></div>
   <button class="iconbtn" id="outBtn" data-hubtoast="Sign out" aria-label="Sign out" title="Sign out"><svg class="ico" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg></button>
 </header>
@@ -1291,7 +1311,7 @@ function renderChrome(){
   $("#meAv").textContent = initials(S.profile.name);
   $("#meName").textContent = S.profile.name;
   $("#meRole").textContent = isMentor()?"Mentor":"Candidate";
-  $("#meRole").className = "rolepill"+(isMentor()?" mentor":"");
+  $("#meRole").className = "me-role"+(isMentor()?" mentor":"");
   const na=attention().length; $("#bellDot").hidden = na===0; $("#bellDot").textContent = na;
   const [tt,ts]=pageHead(); $("#topT").textContent=tt; $("#topS").textContent=ts;
   const closed=S.ui.navClosed||{}, item=n=>{
