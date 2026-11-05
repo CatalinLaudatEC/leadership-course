@@ -231,26 +231,25 @@ Aliases: `#/workflow` → workflow doc, `#/form` → standards doc, `#/checkpoin
 
 ## 6. Features by screen
 
-### Overview (`#/`) — The Hub dashboard
-Laid out like The Hub's dashboard (hub.eracore.com/home) so the course can be reviewed in its future home. Code: `build/home.js` (view, icons, data, events) and `build/home.css`, injected by `integrate.py` at `/*HOMEVIEW*/` and `/*DOCSCSS*/`.
-- **Header:** greeting by time of day with a waving hand, "Here's what's happening across your hub today", date pill.
+### Overview (`#/`) — The Hub dashboard, barebones active version
+A one-to-one copy of The Hub's dashboard (hub.eracore.com/home) in the course's design system, with nothing added. Code: `build/home.js` and `build/home.css`, injected by `integrate.py` at `/*HOMEVIEW*/` and `/*DOCSCSS*/`. The page uses the full content width (`.page:has(> .hub)`).
+- **Header:** greeting by time of day with a waving hand, the subtitle, and the date on the right.
 - **Stat cards:**
-  - **Pending Tasks:** total, with a split bar showing how many come from The Hub and how many from the program.
-  - **Courses Due:** the Team Leader Raising Program, showing its week and signed-off progress.
-  - **Leave Requests:** the balance shows N/A, because the Hub screenshot shows the label with no number.
-- **Your Activity:** Hubstaff activity area chart with a week selector (4 weeks), average, peak and days tracked, a Today marker and point tooltips.
-  - The data is sample data, labelled as such (`HUB.activity`).
-  - Below 600px the chart switches to a compact layout with single-letter day labels.
-- **Quick Links:** My Learning (into the course) plus The Hub's five links. Links that only exist in The Hub show a toast instead of navigating away.
-- **Pending Tasks list:**
-  - The Hub's two items.
-  - The program's items: continue the next competency, plus everything from `attention()`. The first 2 show, with a "Show N more" toggle.
-  - The bell scrolls to this card.
-- **Recent Announcements:** an empty state.
-- **Upcoming Events:** Phase 1 checkpoint, Phase 2 start and the final assessment, dated from `profile.start`.
-- **World Clock:** 8 live analog and digital clocks (Adriatic BIM/Zagreb, Egypt, India, LATAM/Mexico City, MENA/Dubai, Pakistan, Romania, Ukraine) via `Intl` time zones. They have day and night faces and a 12h/24h toggle saved as `S.ui.h24`.
-  - Above 1480px the clocks are a sticky right column, as in The Hub. Below that they become a full-width strip under the dashboard.
-- **Responsive:** the stat cards go to 2 columns at ≤1100px and 1 column at ≤860px. Activity and Quick Links stack at ≤1100px.
+  - Pending Tasks: "2 items waiting for you".
+  - Courses Due: badge 0, "No courses due".
+  - Leave Requests: badge 0, "days remaining this year". The Hub shows no number here, so neither does this page.
+- **Your Activity:** Hubstaff working activity with a monotone curve and a week selector covering the last 4 weeks. Only the current week has data: Mon 32, Tue 43, Wed 43 (`HUB.activity`). Days after today are never drawn.
+- **Quick Links:** My Workspace, My Profile, Company Policies, My Documents and Org Chart.
+- **Bottom row:**
+  - Pending Tasks (2): Upload your government ID, AI Innovation, and "Go To My Workspace".
+  - Recent Announcements (0): "Nothing new to read."
+  - Upcoming Events: "Nothing coming up in the next few weeks."
+- **World Clock:** 8 regions with live analog and digital clocks. The 12-Hour/24-Hour select defaults to 24-Hour and is saved as `S.ui.clockFmt`.
+- **Behaviour:**
+  - Every Hub-only link shows a toast instead of navigating away.
+  - The first "View All" and the bell scroll to the Pending Tasks card.
+- **Responsive:** below 1480px the clocks move under the dashboard. At ≤1100px the cards drop to 2 columns, and at ≤860px to 1.
+- **Enhanced version:** the earlier version is kept as the git tag `dashboard-enhanced`. It adds a course feed, activity stats, day/night clocks and upcoming program milestones.
 
 ### Program map (`#/map`)
 - Conduit-run SVG: Phase 1 runs right into the Checkpoint pull box, then Phase 2 runs back to Final.
