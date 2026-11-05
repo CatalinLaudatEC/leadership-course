@@ -30,14 +30,12 @@ function toast(m, kind){ const t=$("#toast"); t.innerHTML=`<span class="ti">${ic
 document.addEventListener("pointerdown",e=>{ if(RM) return; const b=e.target.closest(".btn,.choices button,.toggle button,.pills button,.palbtn,.gapbtn"); if(!b||b.disabled) return;
   const r=b.getBoundingClientRect(), s=Math.max(r.width,r.height), sp=document.createElement("span"); sp.className="ripple"; sp.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;
   if(getComputedStyle(b).position==="static") b.style.position="relative"; b.style.overflow="hidden"; b.appendChild(sp); setTimeout(()=>sp.remove(),700); },{passive:true});
-/* tilt + spotlight */
+/* tilt */
 const TILT=".kpi,.hstat,.doctile,.ccard,.lvlcard,.dg-week,.dg-box,.dg-cp,.choices button:not(:disabled),.rule,.jump a,.subhead,.flow button,.slist button";
 let curTilt=null;
 function resetTilt(el){ if(!el) return; el.classList.remove("tilting"); el.style.transform=""; }
 document.addEventListener("pointermove",e=>{
   if (RM || e.pointerType!=="mouse") return;
-  const g=e.target.closest(".card:not(.toc),.dsec,.ccard,.doctile");
-  if (g){ const r=g.getBoundingClientRect(); g.style.setProperty("--mx",(e.clientX-r.left)+"px"); g.style.setProperty("--my",(e.clientY-r.top)+"px"); }
   const t=e.target.closest(TILT);
   if (t!==curTilt){ resetTilt(curTilt); curTilt=t; }
   if (!t) return;

@@ -672,10 +672,8 @@ mark{background:rgba(240,166,58,.4);color:inherit;border-radius:3px;padding:0 1p
 .route .pull rect{filter:drop-shadow(0 0 10px var(--glow-blue))}
 .chart .hit .bar{transition:filter .2s}
 .chart .hit:hover .bar{filter:brightness(1.25) drop-shadow(0 0 8px var(--glow-blue))}
-/* cards: glow, spotlight, shine */
+/* cards: glow, shine */
 .card:not(.toc),.dsec,.ccard,.doctile{position:relative}
-.card:not(.toc)::after,.dsec::after,.ccard::after,.doctile::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(460px circle at var(--mx,50%) var(--my,50%),rgba(122,163,247,.11),transparent 45%);opacity:0;transition:opacity .35s;z-index:0}
-.card:not(.toc):hover::after,.dsec:hover::after,.ccard:hover::after,.doctile:hover::after{opacity:1}
 .card,.dsec,.ccard,.doctile{transition:border-color .3s,box-shadow .35s,transform .35s var(--ease)}
 .card:hover,.dsec:hover{border-color:color-mix(in srgb,var(--blue) 28%,var(--border))}
 .kpi,.doctile,.ccard{overflow:hidden}
@@ -2183,14 +2181,12 @@ function toast(m, kind){ const t=$("#toast"); t.innerHTML=`<span class="ti">${ic
 document.addEventListener("pointerdown",e=>{ if(RM) return; const b=e.target.closest(".btn,.choices button,.toggle button,.pills button,.palbtn,.gapbtn"); if(!b||b.disabled) return;
   const r=b.getBoundingClientRect(), s=Math.max(r.width,r.height), sp=document.createElement("span"); sp.className="ripple"; sp.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;
   if(getComputedStyle(b).position==="static") b.style.position="relative"; b.style.overflow="hidden"; b.appendChild(sp); setTimeout(()=>sp.remove(),700); },{passive:true});
-/* tilt + spotlight */
+/* tilt */
 const TILT=".kpi,.hstat,.doctile,.ccard,.lvlcard,.dg-week,.dg-box,.dg-cp,.choices button:not(:disabled),.rule,.jump a,.subhead,.flow button,.slist button";
 let curTilt=null;
 function resetTilt(el){ if(!el) return; el.classList.remove("tilting"); el.style.transform=""; }
 document.addEventListener("pointermove",e=>{
   if (RM || e.pointerType!=="mouse") return;
-  const g=e.target.closest(".card:not(.toc),.dsec,.ccard,.doctile");
-  if (g){ const r=g.getBoundingClientRect(); g.style.setProperty("--mx",(e.clientX-r.left)+"px"); g.style.setProperty("--my",(e.clientY-r.top)+"px"); }
   const t=e.target.closest(TILT);
   if (t!==curTilt){ resetTilt(curTilt); curTilt=t; }
   if (!t) return;

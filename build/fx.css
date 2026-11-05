@@ -53,10 +53,8 @@
 .route .pull rect{filter:drop-shadow(0 0 10px var(--glow-blue))}
 .chart .hit .bar{transition:filter .2s}
 .chart .hit:hover .bar{filter:brightness(1.25) drop-shadow(0 0 8px var(--glow-blue))}
-/* cards: glow, spotlight, shine */
+/* cards: glow, shine */
 .card:not(.toc),.dsec,.ccard,.doctile{position:relative}
-.card:not(.toc)::after,.dsec::after,.ccard::after,.doctile::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(460px circle at var(--mx,50%) var(--my,50%),rgba(122,163,247,.11),transparent 45%);opacity:0;transition:opacity .35s;z-index:0}
-.card:not(.toc):hover::after,.dsec:hover::after,.ccard:hover::after,.doctile:hover::after{opacity:1}
 .card,.dsec,.ccard,.doctile{transition:border-color .3s,box-shadow .35s,transform .35s var(--ease)}
 .card:hover,.dsec:hover{border-color:color-mix(in srgb,var(--blue) 28%,var(--border))}
 .kpi,.doctile,.ccard{overflow:hidden}

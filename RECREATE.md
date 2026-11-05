@@ -349,7 +349,6 @@ A one-to-one copy of The Hub's dashboard (hub.eracore.com/home) in the course's 
   - Hover: scale plus glow.
 - **Hover:**
   - Tilt and lift: 3D perspective tilt following the cursor on KPIs, document tiles, competency cards, level cards, rules, drill choices, diagram boxes and jump links. Large elements get a weaker tilt. Mouse pointers only.
-  - Spotlight: a radial glow follows the cursor on all cards.
   - Shine: a light sweep on cards and buttons.
   - Glowing borders.
 - **Buttons:** gradient primary, lift + glow on hover, press-down scale, ripple at the click point.
